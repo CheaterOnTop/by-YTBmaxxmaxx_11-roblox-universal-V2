@@ -1,3 +1,54 @@
-[This file was protected with MoonSec V3]
+-- Services
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local Workspace = game:GetService("Workspace")
+local PhysicsService = game:GetService("PhysicsService")
 
-pornhub.com
+-- Vérification du LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+if not LocalPlayer then
+    error("Ce script doit être exécuté en tant que LocalScript dans un contexte client.")
+end
+
+-- Initialisation sécurisée de la souris
+local function getMouseSafely()
+    local success, result = pcall(function() return LocalPlayer:GetMouse() end)
+    return success and result or nil
+end
+local Mouse = getMouseSafely()
+if not Mouse then
+    LocalPlayer:GetPropertyChangedSignal("Mouse"):Wait()
+    Mouse = LocalPlayer:GetMouse()
+end
+
+-- Charger la bibliothèque Rayfield pour l'interface
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+-- Création de la fenêtre principale
+local Window = Rayfield:CreateWindow({
+    Name = "Aimbot & ESP Menu",
+    LoadingTitle = "Universal",
+    LoadingSubtitle = "par YTBmaxxmaxx_11",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "AimbotESPConfig",
+        FileName = "Settings"
+    },
+    Discord = {
+        Enabled = false,
+        Invite = "",
+        RememberJoins = true
+    },
+    KeySystem = true,
+    KeySettings = {
+        Title = "Key | Youtube Hub",
+        Subtitle = "Key System",
+        Note = "Key In Discord Server",
+        FileName = "YoutubeHubKey1",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = {"best script"}
+    }
+})
