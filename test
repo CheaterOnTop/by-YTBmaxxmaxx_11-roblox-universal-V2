@@ -49,6 +49,6 @@ local Window = Rayfield:CreateWindow({
         FileName = "YoutubeHubKey1",
         SaveKey = true,
         GrabKeyFromSite = true,
-        Key = {""}
+        Key = {"https://raw.githubusercontent.com/CheaterOnTop/by-YTBmaxxmaxx_11-roblox-universal-V2/refs/heads/main/main.lua"}
     }
 })
