@@ -49,6 +49,6 @@ local Window = Rayfield:CreateWindow({
         FileName = "YoutubeHubKey1",
         SaveKey = true,
         GrabKeyFromSite = false,
-        Key = {"best script"}
+Key = {"ny6PkH_ik0B-mG£fg#c1K_"}
     }
 })
