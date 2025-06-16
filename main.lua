@@ -166,7 +166,7 @@ function XyloKitUI:CreateWindow(title)
     titleLabel.Text = title
     titleLabel.TextColor3 = currentTheme.TextColor
     titleLabel.TextSize = 22
-    titleLabel.Font = Enum.Font.SourceSansPro
+    titleLabel.Font = Enum.Font.SourceSans
     titleLabel.TextXAlignment = Enum.TextXAlignment.Center
     titleLabel.Parent = mainFrame
 
@@ -226,7 +226,7 @@ function XyloKitUI:CreateWindow(title)
     usernameLabel.Text = player.Name
     usernameLabel.TextColor3 = currentTheme.TextColor
     usernameLabel.TextSize = 16
-    usernameLabel.Font = Enum.Font.SourceSansPro
+    usernameLabel.Font = Enum.Font.SourceSans
     usernameLabel.TextXAlignment = Enum.TextXAlignment.Left
     usernameLabel.TextTruncate = Enum.TextTruncate.AtEnd
     usernameLabel.Parent = playerProfileFrame
@@ -234,7 +234,7 @@ function XyloKitUI:CreateWindow(title)
     -- Zone de contenu des onglets
     local contentFrame = Instance.new("Frame")
     contentFrame.Size = UDim2.new(1, -150, 1, -100)
-    contentFrame.Position = UDim2.new(0, 150, 0, 100) -- Légèrement baissé
+    contentFrame.Position = UDim2.new(0, 150, 0, 100)
     contentFrame.BackgroundColor3 = currentTheme.MainBackground
     contentFrame.BorderSizePixel = 0
     contentFrame.Parent = mainFrame
@@ -247,7 +247,7 @@ function XyloKitUI:CreateWindow(title)
     closeButton.Text = "✕"
     closeButton.TextColor3 = currentTheme.TextColor
     closeButton.TextSize = 18
-    closeButton.Font = Enum.Font.SourceSansPro
+    closeButton.Font = Enum.Font.SourceSans
     closeButton.Parent = mainFrame
 
     local closeCorner = Instance.new("UICorner")
@@ -287,7 +287,7 @@ function XyloKitUI:CreateWindow(title)
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TabTextColor -- Rouge fixe
         tabButton.TextSize = 16
-        tabButton.Font = Enum.Font.SourceSansPro
+        tabButton.Font = Enum.Font.SourceSans
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
 
@@ -373,7 +373,7 @@ function XyloKitUI:CreateWindow(title)
             sectionLabel.Text = name
             sectionLabel.TextColor3 = currentTheme.TextColor
             sectionLabel.TextSize = 18
-            sectionLabel.Font = Enum.Font.SourceSansPro
+            sectionLabel.Font = Enum.Font.SourceSans
             sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
             sectionLabel.Parent = sectionFrame
 
@@ -408,7 +408,7 @@ function XyloKitUI:CreateWindow(title)
                 toggleLabel.Text = name
                 toggleLabel.TextColor3 = currentTheme.TextColor
                 toggleLabel.TextSize = 16
-                toggleLabel.Font = Enum.Font.SourceSansPro
+                toggleLabel.Font = Enum.Font.SourceSans
                 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
                 toggleLabel.Parent = toggleFrame
 
@@ -419,7 +419,7 @@ function XyloKitUI:CreateWindow(title)
                 toggleButton.Text = default and "✔" or ""
                 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
                 toggleButton.TextSize = 12
-                toggleButton.Font = Enum.Font.SourceSansPro
+                toggleButton.Font = Enum.Font.SourceSans
                 toggleButton.Parent = toggleFrame
 
                 local toggleCorner = Instance.new("UICorner")
@@ -468,7 +468,7 @@ function XyloKitUI:CreateWindow(title)
                 sliderLabel.Text = name .. ": " .. default
                 sliderLabel.TextColor3 = currentTheme.TextColor
                 sliderLabel.TextSize = 16
-                sliderLabel.Font = Enum.Font.SourceSansPro
+                sliderLabel.Font = Enum.Font.SourceSans
                 sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
                 sliderLabel.Parent = sliderFrame
 
@@ -524,20 +524,20 @@ function XyloKitUI:CreateWindow(title)
                     end
                 end)
 
-                UserInputService.InputChanged:週
-
-                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                    local mousePos = UserInputService:GetMouseLocation()
-                    local relativePos = (mousePos.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X
-                    relativePos = math.clamp(relativePos, 0, 1)
-                    local value = math.floor(min + (max - min) * relativePos)
-                    TweenService:Create(sliderFill, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Size = UDim2.new(relativePos, 0, 1, 0)}):Play()
-                    TweenService:Create(sliderButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Position = UDim2.new(relativePos, -8, 0, -4)}):Play()
-                    sliderLabel.Text = name .. ": " .. value
-                    config[configKey] = value
-                    saveConfig()
-                    callback(value)
-                end
+                UserInputService.InputChanged:Connect(function(input)
+                    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                        local mousePos = UserInputService:GetMouseLocation()
+                        local relativePos = (mousePos.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X
+                        relativePos = math.clamp(relativePos, 0, 1)
+                        local value = math.floor(min + (max - min) * relativePos)
+                        TweenService:Create(sliderFill, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Size = UDim2.new(relativePos, 0, 1, 0)}):Play()
+                        TweenService:Create(sliderButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Position = UDim2.new(relativePos, -8, 0, -4)}):Play()
+                        sliderLabel.Text = name .. ": " .. value
+                        config[configKey] = value
+                        saveConfig()
+                        callback(value)
+                    end
+                end)
             end
 
             -- Fonction pour créer un dropdown
@@ -554,7 +554,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.Text = name .. ": " .. default
                 dropdownLabel.TextColor3 = currentTheme.TextColor
                 dropdownLabel.TextSize = 16
-                dropdownLabel.Font = Enum.Font.SourceSansPro
+                dropdownLabel.Font = Enum.Font.SourceSans
                 dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
                 dropdownLabel.Parent = dropdownFrame
 
@@ -565,7 +565,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButton.Text = "▼"
                 dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextSize = 10
-                dropdownButton.Font = Enum.Font.SourceSansPro
+                dropdownButton.Font = Enum.Font.SourceSans
                 dropdownButton.Parent = dropdownFrame
 
                 local dropdownButtonCorner = Instance.new("UICorner")
@@ -612,7 +612,7 @@ function XyloKitUI:CreateWindow(title)
                     optionButton.Text = option
                     optionButton.TextColor3 = currentTheme.TextColor
                     optionButton.TextSize = 14
-                    optionButton.Font = Enum.Font.SourceSansPro
+                    optionButton.Font = Enum.Font.SourceSans
                     optionButton.Parent = dropdownList
 
                     local optionButtonCorner = Instance.new("UICorner")
@@ -638,8 +638,9 @@ function XyloKitUI:CreateWindow(title)
                 end
 
                 dropdownButton.MouseButton1Click:Connect(function()
-                    dropdownList.Visible = not dropdownList.Visible
-                    local targetSize = dropdownList.Visible and UDim2.new(0.5, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.5, 0, 0, 0)
+                    local newVisible = not dropdownList.Visible
+                    dropdownList.Visible = newVisible
+                    local targetSize = newVisible and UDim2.new(0.5, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.5, 0, 0, 0)
                     TweenService:Create(dropdownList, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = targetSize}):Play()
                 end)
             end
