@@ -88,10 +88,10 @@ function XyloKitUI:CreateWindow(title)
     local XyloKitUIWindow = {}
     XyloKitUIWindow.Config = config
 
-    -- Fond principal (enlarged)
+    -- Fond principal
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 800, 0, 500) -- Increased from 720x460
-    mainFrame.Position = UDim2.new(0.5, -400, 0.5, -200) -- Centered for new size, kept lowered
+    mainFrame.Size = UDim2.new(0, 800, 0, 500)
+    mainFrame.Position = UDim2.new(0.5, -400, 0.5, -200) -- Centered, lowered
     mainFrame.BackgroundColor3 = currentTheme.MainBackground
     mainFrame.BorderSizePixel = 0
     mainFrame.ClipsDescendants = true
@@ -171,7 +171,7 @@ function XyloKitUI:CreateWindow(title)
     titleCorner.CornerRadius = UDim.new(0, 10)
     titleCorner.Parent = titleLabel
 
-    -- Barre d'onglets (adjusted for larger menu)
+    -- Barre d'onglets
     local tabBar = Instance.new("Frame")
     tabBar.Size = UDim2.new(1, -160, 0, 40)
     tabBar.Position = UDim2.new(0, 160, 0, 40)
@@ -185,9 +185,9 @@ function XyloKitUI:CreateWindow(title)
     tabBarLayout.Padding = UDim.new(0, 8)
     tabBarLayout.Parent = tabBar
 
-    -- Barre latérale pour le profil utilisateur (widened)
+    -- Barre latérale pour le profil utilisateur
     local sidebar = Instance.new("Frame")
-    sidebar.Size = UDim2.new(0, 160, 1, -40) -- Increased from 140
+    sidebar.Size = UDim2.new(0, 160, 1, -40)
     sidebar.Position = UDim2.new(0, 0, 0, 40)
     sidebar.BackgroundColor3 = currentTheme.TabBackground
     sidebar.BorderSizePixel = 0
@@ -217,7 +217,7 @@ function XyloKitUI:CreateWindow(title)
     profileIconCorner.Parent = profileIcon
 
     local usernameLabel = Instance.new("TextLabel")
-    usernameLabel.Size = UDim2.new(0, 110, 0, 30) -- Adjusted for wider sidebar
+    usernameLabel.Size = UDim2.new(0, 110, 0, 30)
     usernameLabel.Position = UDim2.new(0, 42, 0, 5)
     usernameLabel.BackgroundTransparency = 1
     usernameLabel.Text = player.Name
@@ -228,7 +228,7 @@ function XyloKitUI:CreateWindow(title)
     usernameLabel.TextTruncate = Enum.TextTruncate.AtEnd
     usernameLabel.Parent = playerProfileFrame
 
-    -- Zone de contenu des onglets (adjusted for larger menu)
+    -- Zone de contenu des onglets
     local contentFrame = Instance.new("Frame")
     contentFrame.Size = UDim2.new(1, -160, 1, -80)
     contentFrame.Position = UDim2.new(0, 160, 0, 80)
@@ -240,7 +240,7 @@ function XyloKitUI:CreateWindow(title)
     contentFrameCorner.CornerRadius = UDim.new(0, 8)
     contentFrameCorner.Parent = contentFrame
 
-    -- Bouton de fermeture (slightly larger)
+    -- Bouton de fermeture
     local closeButton = Instance.new("TextButton")
     closeButton.Size = UDim2.new(0, 34, 0, 34)
     closeButton.Position = UDim2.new(1, -44, 0, 3)
@@ -263,6 +263,25 @@ function XyloKitUI:CreateWindow(title)
         end)
     end)
 
+    -- Right Shift toggle
+    local isMenuOpen = true
+    local defaultPosition = mainFrame.Position
+    local hiddenPosition = UDim2.new(0.5, mainFrame.Position.X.Offset, 1.5, 0) -- Off-screen bottom
+
+    local function toggleMenu()
+        isMenuOpen = not isMenuOpen
+        local targetPos = isMenuOpen and defaultPosition or hiddenPosition
+        local tween = TweenService:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = targetPos})
+        tween:Play()
+    end
+
+    UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+        if gameProcessedEvent then return end
+        if input.KeyCode == Enum.KeyCode.RightShift then
+            toggleMenu()
+        end
+    end)
+
     -- Gestion des onglets
     local tabs = {}
     local currentTab = nil
@@ -273,9 +292,9 @@ function XyloKitUI:CreateWindow(title)
         local tab = {}
         tab.Name = name
 
-        -- Bouton de l'onglet (slightly larger)
+        -- Bouton de l'onglet
         local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(0, 120, 1, 0) -- Increased from 110
+        tabButton.Size = UDim2.new(0, 120, 1, 0)
         tabButton.BackgroundColor3 = currentTheme.TabBackground
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
@@ -321,12 +340,14 @@ function XyloKitUI:CreateWindow(title)
         local tabContentLayout = Instance.new("UIListLayout")
         tabContentLayout.FillDirection = Enum.FillDirection.Horizontal
         tabContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        tabContentLayout.Padding = UDim.new(0, 15) -- Increased padding for better section spacing
-        tabContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center -- Center sections
+        tabContentLayout.Padding = UDim.new(0, 15)
+        tabContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
         tabContentLayout.Parent = tabContent
 
         tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            tabContent.CanvasSize = UDim2.new(tabContentLayout.AbsoluteContentSize.X / tabContent.AbsoluteSize.X, 0, 0, 0)
+            if tabContent.AbsoluteSize.X and tabContent.AbsoluteSize.X > 0 then
+                tabContent.CanvasSize = UDim2.new(tabContentLayout.AbsoluteContentSize.X / tabContent.AbsoluteSize.X, 0, 0, 0)
+            end
         end)
 
         tab.Button = tabButton
@@ -357,13 +378,13 @@ function XyloKitUI:CreateWindow(title)
             section.Name = name
 
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 220, 1, -10) -- Increased width for larger menu
-            sectionFrame.BackgroundColor3 = currentTheme.Section/background
+            sectionFrame.Size = UDim2.new(0, 220, 1, -10)
+            sectionFrame.BackgroundColor3 = currentTheme.SectionBackground -- Fixed typo: SectionBackground
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = tabContent
 
             local sectionCorner = Instance.new("UICorner")
-            sectionCorner.CornerRadius = UDim.new(0, 6) -- Less rounded for rectangular look
+            sectionCorner.CornerRadius = UDim.new(0, 6)
             sectionCorner.Parent = sectionFrame
 
             local sectionStroke = Instance.new("UIStroke")
