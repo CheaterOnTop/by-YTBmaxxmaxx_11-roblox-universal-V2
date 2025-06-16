@@ -6,6 +6,7 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
+print("test")
 
 -- Attendre que le jeu et le joueur soient chargés
 local function waitForGameLoaded()
