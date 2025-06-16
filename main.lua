@@ -225,7 +225,6 @@ function XyloKitUI:CreateWindow(title)
     contentFrame.ScrollBarThickness = 6
     contentFrame.ScrollBarImageColor3 = currentTheme.BorderColor
     contentFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-    contentFrame.ClipsDescendants = false -- Désactiver pour éviter de couper le contenu
     contentFrame.Parent = mainFrame
 
     local contentLayout = Instance.new("UIListLayout")
@@ -316,7 +315,7 @@ function XyloKitUI:CreateWindow(title)
                 end
                 tabContent.Visible = true
                 currentTab = tab
-                print("Tab selected: " .. name .. ", Content Visible: " .. tostring(tabContent.Visible)) -- Débogage
+                print("Tab selected: " .. name) -- Débogage
             end
         end)
 
@@ -330,11 +329,10 @@ function XyloKitUI:CreateWindow(title)
             sectionFrame.Size = UDim2.new(0, 220, 0, 350)
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
-            sectionFrame.ClipsDescendants = false -- Désactiver pour éviter de couper le contenu
             sectionFrame.Parent = tabContent
 
             local sectionStroke = Instance.new("UIStroke")
-            sectionStroke.Thickness = 2
+            sectionStroke.Thickness = 2 -- Augmenté pour plus de visibilité
             sectionStroke.Color = currentTheme.BorderColor
             sectionStroke.Parent = sectionFrame
 
@@ -375,7 +373,6 @@ function XyloKitUI:CreateWindow(title)
             sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                 local contentHeight = sectionLayout.AbsoluteContentSize.Y + 45
                 sectionFrame.Size = UDim2.new(0, 220, 0, math.max(350, contentHeight))
-                print("Section " .. name .. " adjusted to height: " .. math.max(350, contentHeight)) -- Débogage
             end)
 
             section.Frame = sectionFrame
@@ -387,7 +384,6 @@ function XyloKitUI:CreateWindow(title)
                 toggleFrame.Size = UDim2.new(1, -20, 0, 30)
                 toggleFrame.BackgroundTransparency = 1
                 toggleFrame.Parent = sectionFrame
-                print("ToggleFrame parented to: " .. tostring(sectionFrame)) -- Débogage
 
                 local toggleLabel = Instance.new("TextLabel")
                 toggleLabel.Size = UDim2.new(0.6, 0, 1, 0)
@@ -439,7 +435,6 @@ function XyloKitUI:CreateWindow(title)
                 sliderFrame.Size = UDim2.new(1, -20, 0, 45)
                 sliderFrame.BackgroundTransparency = 1
                 sliderFrame.Parent = sectionFrame
-                print("SliderFrame parented to: " .. tostring(sectionFrame)) -- Débogage
 
                 local sliderLabel = Instance.new("TextLabel")
                 sliderLabel.Size = UDim2.new(0.5, 0, 0, 20)
@@ -527,7 +522,6 @@ function XyloKitUI:CreateWindow(title)
                 dropdownFrame.Size = UDim2.new(1, -20, 0, 30)
                 dropdownFrame.BackgroundTransparency = 1
                 dropdownFrame.Parent = sectionFrame
-                print("DropdownFrame parented to: " .. tostring(sectionFrame)) -- Débogage
 
                 local dropdownLabel = Instance.new("TextLabel")
                 dropdownLabel.Size = UDim2.new(0.6, 0, 1, 0)
