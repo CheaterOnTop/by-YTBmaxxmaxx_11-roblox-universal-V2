@@ -34,7 +34,7 @@ local Themes = {
         MainBackground = Color3.fromRGB(17, 17, 17), -- #111111
         TabBackground = Color3.fromRGB(10, 10, 10), -- #0A0A0A
         SectionBackground = Color3.fromRGB(26, 26, 26), -- #1A1A1A
-        TextColor = Color3.fromRGB(255, 255, 255), -- Changé en blanc pour meilleure lisibilité
+        TextColor = Color3.fromRGB(255, 255, 255), -- Blanc pour meilleure lisibilité
         BorderColor = Color3.fromRGB(51, 51, 51), -- #333333
         ButtonBackground = Color3.fromRGB(20, 20, 20), -- #141414
         GlowColor = Color3.fromRGB(255, 0, 0) -- Rouge pour effet glow
@@ -229,7 +229,6 @@ function XyloKitUI:CreateWindow(title)
     contentFrame.ScrollBarThickness = 6
     contentFrame.ScrollBarImageColor3 = currentTheme.BorderColor
     contentFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-    contentFrame.AutomaticCanvasSize = Enum.AutomaticCanvasSize.XY -- Ajustement automatique
     contentFrame.Parent = mainFrame
 
     local contentLayout = Instance.new("UIListLayout")
@@ -243,6 +242,13 @@ function XyloKitUI:CreateWindow(title)
     contentPadding.PaddingLeft = UDim.new(0, 10)
     contentPadding.PaddingRight = UDim.new(0, 10)
     contentPadding.Parent = contentFrame
+
+    -- Mettre à jour manuellement le CanvasSize
+    contentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        local contentSize = contentLayout.AbsoluteContentSize
+        contentFrame.CanvasSize = UDim2.new(0, contentSize.X, 0, contentSize.Y)
+        print("Updated CanvasSize: " .. tostring(contentSize)) -- Débogage
+    end)
 
     -- Bouton de fermeture
     local closeButton = Instance.new("TextButton")
@@ -310,6 +316,13 @@ function XyloKitUI:CreateWindow(title)
         tabPadding.PaddingLeft = UDim.new(0, 10)
         tabPadding.PaddingRight = UDim.new(0, 10)
         tabPadding.Parent = tabContent
+
+        -- Mettre à jour le CanvasSize pour les sections dans l'onglet
+        tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            local contentSize = tabContentLayout.AbsoluteContentSize
+            tabContent.Size = UDim2.new(1, 0, 0, contentSize.Y)
+            print("Updated tabContent Size: " .. tostring(contentSize)) -- Débogage
+        end)
 
         tab.Button = tabButton
         tab.Content = tabContent
