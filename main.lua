@@ -41,7 +41,7 @@ local Themes = {
         ButtonBackground = Color3.fromRGB(20, 20, 20), -- #141414
         ButtonHoverBackground = Color3.fromRGB(51, 51, 51), -- #333333
         SelectedTabBackground = Color3.fromRGB(40, 40, 40), -- #282828
-        GlowColor = Color3.fromRGB(255, 0, 0, 0.2) -- Rouge subtil pour effet glow
+        GlowColor = Color3.fromRGB(255, 0, 0) -- Rouge subtil pour effet glow
     }
 }
 
@@ -217,7 +217,7 @@ function XyloKitUI:CreateWindow(title)
     -- Barre d'onglets (à droite)
     local tabBar = Instance.new("Frame")
     tabBar.Size = UDim2.new(0, 130, 1, -80)
-    tabBar.Position = UDim2.new(1, -130, 0, 40)
+    tabBar.Position = UDim2.new(1, -130, 0, 80)
     tabBar.BackgroundColor3 = currentTheme.TabBackground
     tabBar.BorderSizePixel = 0
     tabBar.Parent = mainFrame
@@ -239,7 +239,7 @@ function XyloKitUI:CreateWindow(title)
     -- Bouton de fermeture
     local closeButton = Instance.new("TextButton")
     closeButton.Size = UDim2.new(0, 30, 0, 30)
-    closeButton.Position = UDim2.new(1, -40, 0, -0, -40, 5)
+    closeButton.Position = UDim2.new(1, -40, 0, 5)
     closeButton.BackgroundColor3 = currentTheme.ButtonBackground
     closeButton.Text = "X"
     closeButton.TextColor3 = currentTheme.TextColor
@@ -252,7 +252,7 @@ function XyloKitUI:CreateWindow(title)
     closeCorner.Parent = closeButton
 
     closeButton.MouseButton1Click:Connect(function()
-        local tweenClose = TweenService:Create(mainFrame, TweenInfo.new(0.4, mainFrame, Enum.EasingStyle.Quad, Enum.EasingDirection.In)), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, 200))})
+        local tweenClose = TweenService:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, 200)})
         tweenClose:Play()
         tweenClose.Completed:Connect(function()
             screenGui:Destroy()
@@ -282,8 +282,8 @@ function XyloKitUI:CreateWindow(title)
 
         local tabStroke = Instance.new("UIStroke")
         tabStroke.Thickness = 2
-        tabStroke.Color = currentTheme.BackgroundColor
-        tabBarLayout:Parent = tabBar
+        tabStroke.Color = currentTheme.BorderColor
+        tabStroke.Parent = tabButton
 
         -- Effet de survol
         tabButton.MouseEnter:Connect(function()
@@ -291,14 +291,14 @@ function XyloKitUI:CreateWindow(title)
                 local tweenHover = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonHoverBackground})
                 tweenHover:Play()
             end
-        end))
+        end)
 
         tabButton.MouseLeave:Connect(function()
             if currentTab ~= tab then
                 local tweenLeave = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.TabBackground})
                 tweenLeave:Play()
             end
-        end))
+        end)
 
         -- Contenu de l'onglet
         local tabContent = Instance.new("ScrollingFrame")
@@ -322,7 +322,7 @@ function XyloKitUI:CreateWindow(title)
 
         tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             tabContent.CanvasSize = UDim2.new(tabContentLayout.AbsoluteContentSize.X / tabContent.AbsoluteSize.X, 0, 0, 0)
-        end))
+        end)
 
         tab.Button = tabButton
         tab.Content = tabContent
@@ -343,7 +343,7 @@ function XyloKitUI:CreateWindow(title)
                 tabContent.Visible = true
                 currentTab = tab
             end
-        end))
+        end)
 
         -- Fonction pour créer une section dans l'onglet
         function tab:CreateSection(name)
@@ -372,7 +372,7 @@ function XyloKitUI:CreateWindow(title)
             sectionShadow.Position = UDim2.new(0, -5, 0, -5)
             sectionShadow.BackgroundTransparency = 1
             sectionShadow.Image = "rbxassetid://5028857472"
-            sectionShadow.ImageColor3 = Color3.fromRGB(0, 0, 0, 0.3)
+            sectionShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
             sectionShadow.ImageTransparency = 0.7
             sectionShadow.ZIndex = -1
             sectionShadow.Parent = sectionFrame
@@ -401,7 +401,7 @@ function XyloKitUI:CreateWindow(title)
 
             sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                 sectionFrame.Size = UDim2.new(0, 180, 0, math.max(300, sectionLayout.AbsoluteContentSize.Y + 45))
-            end))
+            end)
 
             section.Frame = sectionFrame
 
