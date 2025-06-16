@@ -163,7 +163,7 @@ function XyloKitUI:CreateWindow(title)
     titleLabel.Text = title
     titleLabel.TextColor3 = currentTheme.TextColor
     titleLabel.TextSize = 20
-    titleLabel.Font = Enum.Font.Inter -- Modern, clean font
+    titleLabel.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
     titleLabel.TextXAlignment = Enum.TextXAlignment.Center
     titleLabel.Parent = mainFrame
 
@@ -223,7 +223,7 @@ function XyloKitUI:CreateWindow(title)
     usernameLabel.Text = player.Name
     usernameLabel.TextColor3 = currentTheme.TextColor
     usernameLabel.TextSize = 15
-    usernameLabel.Font = Enum.Font.Inter
+    usernameLabel.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
     usernameLabel.TextXAlignment = Enum.TextXAlignment.Left
     usernameLabel.TextTruncate = Enum.TextTruncate.AtEnd
     usernameLabel.Parent = playerProfileFrame
@@ -248,7 +248,7 @@ function XyloKitUI:CreateWindow(title)
     closeButton.Text = "X"
     closeButton.TextColor3 = currentTheme.TextColor
     closeButton.TextSize = 16
-    closeButton.Font = Enum.Font.Inter
+    closeButton.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
     closeButton.Parent = mainFrame
 
     local closeCorner = Instance.new("UICorner")
@@ -280,7 +280,7 @@ function XyloKitUI:CreateWindow(title)
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
         tabButton.TextSize = 16
-        tabButton.Font = Enum.Font.Inter
+        tabButton.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
 
@@ -377,7 +377,7 @@ function XyloKitUI:CreateWindow(title)
             sectionLabel.Text = name
             sectionLabel.TextColor3 = currentTheme.TextColor
             sectionLabel.TextSize = 18
-            sectionLabel.Font = Enum.Font.Inter
+            sectionLabel.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
             sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
             sectionLabel.Parent = sectionFrame
 
@@ -412,7 +412,7 @@ function XyloKitUI:CreateWindow(title)
                 toggleLabel.Text = name
                 toggleLabel.TextColor3 = currentTheme.TextColor
                 toggleLabel.TextSize = 16
-                toggleLabel.Font = Enum.Font.Inter
+                toggleLabel.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
                 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
                 toggleLabel.Parent = toggleFrame
 
@@ -423,7 +423,7 @@ function XyloKitUI:CreateWindow(title)
                 toggleButton.Text = default and "✔" or ""
                 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
                 toggleButton.TextSize = 14
-                toggleButton.Font = Enum.Font.JetBrainsMono
+                toggleButton.Font = Enum.Font.Code -- Replaced JetBrainsMono with Code
                 toggleButton.Parent = toggleFrame
 
                 local toggleCorner = Instance.new("UICorner")
@@ -475,7 +475,7 @@ function XyloKitUI:CreateWindow(title)
                 sliderLabel.Text = name .. ": " .. default
                 sliderLabel.TextColor3 = currentTheme.TextColor
                 sliderLabel.TextSize = 16
-                sliderLabel.Font = Enum.Font.Inter
+                sliderLabel.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
                 sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
                 sliderLabel.Parent = sliderFrame
 
@@ -563,7 +563,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.Text = name .. ": " .. default
                 dropdownLabel.TextColor3 = currentTheme.TextColor
                 dropdownLabel.TextSize = 16
-                dropdownLabel.Font = Enum.Font.Inter
+                dropdownLabel.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
                 dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
                 dropdownLabel.Parent = dropdownFrame
 
@@ -574,7 +574,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButton.Text = "▼"
                 dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextSize = 14
-                dropdownButton.Font = Enum.Font.JetBrainsMono
+                dropdownButton.Font = Enum.Font.Code -- Replaced JetBrainsMono with Code
                 dropdownButton.Parent = dropdownFrame
 
                 local dropdownButtonCorner = Instance.new("UICorner")
@@ -623,7 +623,7 @@ function XyloKitUI:CreateWindow(title)
                     optionButton.Text = option
                     optionButton.TextColor3 = currentTheme.TextColor
                     optionButton.TextSize = 14
-                    optionButton.Font = Enum.Font.Inter
+                    optionButton.Font = Enum.Font.Gotham -- Replaced Inter with Gotham
                     optionButton.Parent = dropdownList
 
                     local optionButtonCorner = Instance.new("UICorner")
