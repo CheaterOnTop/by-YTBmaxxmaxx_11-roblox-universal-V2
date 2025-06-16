@@ -34,7 +34,7 @@ local Themes = {
         MainBackground = Color3.fromRGB(17, 17, 17), -- #111111
         TabBackground = Color3.fromRGB(10, 10, 10), -- #0A0A0A
         SectionBackground = Color3.fromRGB(26, 26, 26), -- #1A1A1A
-        TextColor = Color3.fromRGB(255, 255, 255), -- Blanc pour meilleure lisibilité
+        TextColor = Color3.fromRGB(255, 0, 0), -- #FF0000
         BorderColor = Color3.fromRGB(51, 51, 51), -- #333333
         ButtonBackground = Color3.fromRGB(20, 20, 20), -- #141414
         GlowColor = Color3.fromRGB(255, 0, 0) -- Rouge pour effet glow
@@ -161,7 +161,6 @@ function XyloKitUI:CreateWindow(title)
     titleLabel.TextSize = 18
     titleLabel.Font = Enum.Font.Roboto
     titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-    titleLabel.ZIndex = 2
     titleLabel.Parent = mainFrame
 
     local titleCorner = Instance.new("UICorner")
@@ -187,7 +186,6 @@ function XyloKitUI:CreateWindow(title)
     playerProfileFrame.Size = UDim2.new(1, -10, 0, 40)
     playerProfileFrame.Position = UDim2.new(0, 5, 1, -50)
     playerProfileFrame.BackgroundTransparency = 1
-    playerProfileFrame.ZIndex = 2
     playerProfileFrame.Parent = tabBar
 
     local userId = player.UserId
@@ -200,7 +198,6 @@ function XyloKitUI:CreateWindow(title)
     profileIcon.Position = UDim2.new(0, 5, 0, 5)
     profileIcon.BackgroundTransparency = 1
     profileIcon.Image = thumbnailContent or "rbxasset://textures/ui/GuiImagePlaceholder.png"
-    profileIcon.ZIndex = 2
     profileIcon.Parent = playerProfileFrame
 
     local profileIconCorner = Instance.new("UICorner")
@@ -217,7 +214,6 @@ function XyloKitUI:CreateWindow(title)
     usernameLabel.Font = Enum.Font.Roboto
     usernameLabel.TextXAlignment = Enum.TextXAlignment.Left
     usernameLabel.TextTruncate = Enum.TextTruncate.AtEnd
-    usernameLabel.ZIndex = 2
     usernameLabel.Parent = playerProfileFrame
 
     -- Zone de contenu des onglets avec défilement
@@ -232,7 +228,7 @@ function XyloKitUI:CreateWindow(title)
     contentFrame.Parent = mainFrame
 
     local contentLayout = Instance.new("UIListLayout")
-    contentLayout.FillDirection = Enum.FillDirection.Vertical -- Chaque onglet est empilé verticalement
+    contentLayout.FillDirection = Enum.FillDirection.Horizontal
     contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
     contentLayout.Padding = UDim.new(0, 10)
     contentLayout.Parent = contentFrame
@@ -240,14 +236,11 @@ function XyloKitUI:CreateWindow(title)
     local contentPadding = Instance.new("UIPadding")
     contentPadding.PaddingTop = UDim.new(0, 20)
     contentPadding.PaddingLeft = UDim.new(0, 10)
-    contentPadding.PaddingRight = UDim.new(0, 10)
     contentPadding.Parent = contentFrame
 
-    -- Mettre à jour manuellement le CanvasSize
+    -- Mettre à jour la taille du Canvas dynamiquement
     contentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        local contentSize = contentLayout.AbsoluteContentSize
-        contentFrame.CanvasSize = UDim2.new(0, contentSize.X, 0, contentSize.Y)
-        print("Updated CanvasSize: " .. tostring(contentSize)) -- Débogage
+        contentFrame.CanvasSize = UDim2.new(0, contentLayout.AbsoluteContentSize.X, 0, math.max(contentLayout.AbsoluteContentSize.Y, 420))
     end)
 
     -- Bouton de fermeture
@@ -259,7 +252,6 @@ function XyloKitUI:CreateWindow(title)
     closeButton.TextColor3 = currentTheme.TextColor
     closeButton.TextSize = 14
     closeButton.Font = Enum.Font.Roboto
-    closeButton.ZIndex = 2
     closeButton.Parent = mainFrame
 
     local closeCorner = Instance.new("UICorner")
@@ -293,47 +285,28 @@ function XyloKitUI:CreateWindow(title)
         tabButton.TextSize = 16
         tabButton.Font = Enum.Font.Roboto
         tabButton.BorderSizePixel = 0
-        tabButton.ZIndex = 2
         tabButton.Parent = tabBar
 
         -- Contenu de l'onglet
         local tabContent = Instance.new("Frame")
-        tabContent.Size = UDim2.new(1, 0, 0, 0) -- Taille initiale, ajustée par AutomaticSize
+        tabContent.Size = UDim2.new(0, 0, 0, 0) -- Taille initiale, ajustée dynamiquement
         tabContent.BackgroundTransparency = 1
         tabContent.Visible = false
-        tabContent.AutomaticSize = Enum.AutomaticSize.Y -- Ajustement automatique de la hauteur
-        tabContent.ZIndex = 2
         tabContent.Parent = contentFrame
 
         local tabContentLayout = Instance.new("UIListLayout")
-        tabContentLayout.FillDirection = Enum.FillDirection.Horizontal -- Sections côte à côte
+        tabContentLayout.FillDirection = Enum.FillDirection.Horizontal
         tabContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
         tabContentLayout.Padding = UDim.new(0, 10)
         tabContentLayout.Parent = tabContent
 
         local tabPadding = Instance.new("UIPadding")
-        tabPadding.PaddingTop = UDim.new(0, 10)
-        tabPadding.PaddingLeft = UDim.new(0, 10)
-        tabPadding.PaddingRight = UDim.new(0, 10)
+        tabPadding.PaddingTop = UDim.new(0, 0)
         tabPadding.Parent = tabContent
-
-        -- Mettre à jour le CanvasSize pour les sections dans l'onglet
-        tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            local contentSize = tabContentLayout.AbsoluteContentSize
-            tabContent.Size = UDim2.new(1, 0, 0, contentSize.Y)
-            print("Updated tabContent Size: " .. tostring(contentSize)) -- Débogage
-        end)
 
         tab.Button = tabButton
         tab.Content = tabContent
         tabs[name] = tab
-
-        -- Rendre le premier onglet visible par défaut
-        if not currentTab then
-            tabContent.Visible = true
-            currentTab = tab
-            print("First tab selected: " .. name) -- Débogage
-        end
 
         -- Gestion du clic sur l'onglet
         tabButton.MouseButton1Click:Connect(function()
@@ -354,15 +327,17 @@ function XyloKitUI:CreateWindow(title)
             section.Name = name
 
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 220, 0, 0) -- Hauteur ajustée par AutomaticSize
+            sectionFrame.Size = UDim2.new(0, 220, 0, 350)
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
-            sectionFrame.AutomaticSize = Enum.AutomaticSize.Y -- Ajustement automatique
-            sectionFrame.ZIndex = 2
             sectionFrame.Parent = tabContent
 
+            local sectionCorner = Instance.new("UICorner")
+            sectionCorner.CornerRadius = UDim.new(0, 6)
+            sectionCorner.Parent = sectionFrame
+
             local sectionStroke = Instance.new("UIStroke")
-            sectionStroke.Thickness = 2
+            sectionStroke.Thickness = 1
             sectionStroke.Color = currentTheme.BorderColor
             sectionStroke.Parent = sectionFrame
 
@@ -374,7 +349,7 @@ function XyloKitUI:CreateWindow(title)
             sectionShadow.Image = "rbxassetid://5028857472"
             sectionShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
             sectionShadow.ImageTransparency = 0.7
-            sectionShadow.ZIndex = 1 -- Plus bas que les éléments interactifs
+            sectionShadow.ZIndex = -1
             sectionShadow.Parent = sectionFrame
 
             local sectionLabel = Instance.new("TextLabel")
@@ -386,7 +361,6 @@ function XyloKitUI:CreateWindow(title)
             sectionLabel.TextSize = 18
             sectionLabel.Font = Enum.Font.Roboto
             sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
-            sectionLabel.ZIndex = 2
             sectionLabel.Parent = sectionFrame
 
             local sectionLayout = Instance.new("UIListLayout")
@@ -400,15 +374,20 @@ function XyloKitUI:CreateWindow(title)
             sectionPadding.PaddingBottom = UDim.new(0, 10)
             sectionPadding.Parent = sectionFrame
 
+            -- Ajuster dynamiquement la taille de la section
+            sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                local contentHeight = sectionLayout.AbsoluteContentSize.Y + 45
+                sectionFrame.Size = UDim2.new(0, 220, 0, math.max(350, contentHeight))
+            end)
+
             section.Frame = sectionFrame
 
             -- Fonction pour créer un toggle
             function section:CreateToggle(name, default, callback)
-                print("Creating toggle: " .. name .. " in section " .. section.Name) -- Débogage
+                print("Creating toggle: " .. name) -- Débogage
                 local toggleFrame = Instance.new("Frame")
                 toggleFrame.Size = UDim2.new(1, -20, 0, 30)
                 toggleFrame.BackgroundTransparency = 1
-                toggleFrame.ZIndex = 2
                 toggleFrame.Parent = sectionFrame
 
                 local toggleLabel = Instance.new("TextLabel")
@@ -420,7 +399,6 @@ function XyloKitUI:CreateWindow(title)
                 toggleLabel.TextSize = 16
                 toggleLabel.Font = Enum.Font.Roboto
                 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-                toggleLabel.ZIndex = 2
                 toggleLabel.Parent = toggleFrame
 
                 local toggleButton = Instance.new("TextButton")
@@ -431,7 +409,6 @@ function XyloKitUI:CreateWindow(title)
                 toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
                 toggleButton.TextSize = 12
                 toggleButton.Font = Enum.Font.Roboto
-                toggleButton.ZIndex = 2
                 toggleButton.Parent = toggleFrame
 
                 local toggleCorner = Instance.new("UICorner")
@@ -458,11 +435,10 @@ function XyloKitUI:CreateWindow(title)
 
             -- Fonction pour créer un slider
             function section:CreateSlider(name, min, max, default, callback)
-                print("Creating slider: " .. name .. " in section " .. section.Name) -- Débogage
+                print("Creating slider: " .. name) -- Débogage
                 local sliderFrame = Instance.new("Frame")
                 sliderFrame.Size = UDim2.new(1, -20, 0, 45)
                 sliderFrame.BackgroundTransparency = 1
-                sliderFrame.ZIndex = 2
                 sliderFrame.Parent = sectionFrame
 
                 local sliderLabel = Instance.new("TextLabel")
@@ -474,14 +450,12 @@ function XyloKitUI:CreateWindow(title)
                 sliderLabel.TextSize = 16
                 sliderLabel.Font = Enum.Font.Roboto
                 sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-                sliderLabel.ZIndex = 2
                 sliderLabel.Parent = sliderFrame
 
                 local sliderBar = Instance.new("Frame")
                 sliderBar.Size = UDim2.new(1, -10, 0, 6)
                 sliderBar.Position = UDim2.new(0, 5, 0, 25)
                 sliderBar.BackgroundColor3 = currentTheme.ButtonBackground
-                sliderBar.ZIndex = 2
                 sliderBar.Parent = sliderFrame
 
                 local sliderBarCorner = Instance.new("UICorner")
@@ -492,7 +466,6 @@ function XyloKitUI:CreateWindow(title)
                 sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
                 sliderFill.BackgroundColor3 = currentTheme.TextColor
                 sliderFill.BorderSizePixel = 0
-                sliderFill.ZIndex = 2
                 sliderFill.Parent = sliderBar
 
                 local sliderFillCorner = Instance.new("UICorner")
@@ -504,7 +477,6 @@ function XyloKitUI:CreateWindow(title)
                 sliderButton.Position = UDim2.new((default - min) / (max - min), -6, 0, -3)
                 sliderButton.BackgroundColor3 = currentTheme.TextColor
                 sliderButton.Text = ""
-                sliderButton.ZIndex = 2
                 sliderButton.Parent = sliderBar
 
                 local sliderButtonCorner = Instance.new("UICorner")
@@ -550,11 +522,10 @@ function XyloKitUI:CreateWindow(title)
 
             -- Fonction pour créer un dropdown
             function section:CreateDropdown(name, options, default, callback)
-                print("Creating dropdown: " .. name .. " in section " .. section.Name) -- Débogage
+                print("Creating dropdown: " .. name) -- Débogage
                 local dropdownFrame = Instance.new("Frame")
                 dropdownFrame.Size = UDim2.new(1, -20, 0, 30)
                 dropdownFrame.BackgroundTransparency = 1
-                dropdownFrame.ZIndex = 2
                 dropdownFrame.Parent = sectionFrame
 
                 local dropdownLabel = Instance.new("TextLabel")
@@ -566,7 +537,6 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.TextSize = 16
                 dropdownLabel.Font = Enum.Font.Roboto
                 dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
-                dropdownLabel.ZIndex = 2
                 dropdownLabel.Parent = dropdownFrame
 
                 local dropdownButton = Instance.new("TextButton")
@@ -577,7 +547,6 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextSize = 12
                 dropdownButton.Font = Enum.Font.Roboto
-                dropdownButton.ZIndex = 2
                 dropdownButton.Parent = dropdownFrame
 
                 local dropdownButtonCorner = Instance.new("UICorner")
@@ -592,7 +561,6 @@ function XyloKitUI:CreateWindow(title)
                 dropdownList.ScrollBarThickness = 4
                 dropdownList.ScrollBarImageColor3 = currentTheme.BorderColor
                 dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 25)
-                dropdownList.ZIndex = 3 -- Plus élevé pour apparaître au-dessus
                 dropdownList.Parent = dropdownFrame
 
                 local dropdownListCorner = Instance.new("UICorner")
@@ -618,7 +586,6 @@ function XyloKitUI:CreateWindow(title)
                     optionButton.TextColor3 = currentTheme.TextColor
                     optionButton.TextSize = 14
                     optionButton.Font = Enum.Font.Roboto
-                    optionButton.ZIndex = 3
                     optionButton.Parent = dropdownList
 
                     local optionButtonCorner = Instance.new("UICorner")
