@@ -32,16 +32,15 @@ screenGui.IgnoreGuiInset = true
 local Themes = {
     Dark = {
         MainBackground = Color3.fromRGB(17, 17, 17), -- #111111
-        TabBackground = Color3.fromRGB(10, 10, 10), -- #0A0A0A
+        TabBackground = Color3.fromRGB(0, 0, 0), -- #000000
         SectionBackground = Color3.fromRGB(26, 26, 26), -- #1A1A1A
         TextColor = Color3.fromRGB(255, 0, 0), -- #FF0000
         TextHoverColor = Color3.fromRGB(255, 51, 51), -- #FF3333
         BorderColor = Color3.fromRGB(51, 51, 51), -- #333333
         SelectedTabColor = Color3.fromRGB(255, 0, 0), -- #FF0000 pour contour
-        ButtonBackground = Color3.fromRGB(20, 20, 20), -- #141414
+        ButtonBackground = Color3.fromRGB(0, 0, 0), -- #000000
         ButtonHoverBackground = Color3.fromRGB(51, 51, 51), -- #333333
-        SelectedTabBackground = Color3.fromRGB(40, 40, 40), -- #282828
-        GlowColor = Color3.fromRGB(255, 0, 0) -- Rouge subtil pour effet glow
+        SelectedTabBackground = Color3.fromRGB(40, 40, 40) -- Fond subtil pour onglet sélectionné
     }
 }
 
@@ -98,24 +97,13 @@ function XyloKitUI:CreateWindow(title)
     mainFrame.Parent = screenGui
 
     local mainFrameCorner = Instance.new("UICorner")
-    mainFrameCorner.CornerRadius = UDim.new(0, 10)
+    mainFrameCorner.CornerRadius = UDim.new(0, 8)
     mainFrameCorner.Parent = mainFrame
 
     local mainFrameStroke = Instance.new("UIStroke")
     mainFrameStroke.Thickness = 1
     mainFrameStroke.Color = currentTheme.BorderColor
     mainFrameStroke.Parent = mainFrame
-
-    -- Effet de glow
-    local glow = Instance.new("ImageLabel")
-    glow.Size = UDim2.new(1, 20, 1, 20)
-    glow.Position = UDim2.new(0, -10, 0, -10)
-    glow.BackgroundTransparency = 1
-    glow.Image = "rbxassetid://5028857472" -- Effet de glow Roblox
-    glow.ImageColor3 = currentTheme.GlowColor
-    glow.ImageTransparency = 0.8
-    glow.ZIndex = -1
-    glow.Parent = mainFrame
 
     -- Drag-and-drop
     local dragging = false
@@ -168,10 +156,24 @@ function XyloKitUI:CreateWindow(title)
     titleLabel.Parent = mainFrame
 
     local titleCorner = Instance.new("UICorner")
-    titleCorner.CornerRadius = UDim.new(0, 10)
+    titleCorner.CornerRadius = UDim.new(0, 8)
     titleCorner.Parent = titleLabel
 
-    -- Barre latérale pour le profil utilisateur (à gauche)
+    -- Barre d'onglets
+    local tabBar = Instance.new("Frame")
+    tabBar.Size = UDim2.new(1, -130, 0, 40)
+    tabBar.Position = UDim2.new(0, 130, 0, 40)
+    tabBar.BackgroundColor3 = currentTheme.TabBackground
+    tabBar.BorderSizePixel = 0
+    tabBar.Parent = mainFrame
+
+    local tabBarLayout = Instance.new("UIListLayout")
+    tabBarLayout.FillDirection = Enum.FillDirection.Horizontal
+    tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    tabBarLayout.Padding = UDim.new(0, 5)
+    tabBarLayout.Parent = tabBar
+
+    -- Barre latérale pour le profil utilisateur
     local sidebar = Instance.new("Frame")
     sidebar.Size = UDim2.new(0, 130, 1, -40)
     sidebar.Position = UDim2.new(0, 0, 0, 40)
@@ -214,24 +216,10 @@ function XyloKitUI:CreateWindow(title)
     usernameLabel.TextTruncate = Enum.TextTruncate.AtEnd
     usernameLabel.Parent = playerProfileFrame
 
-    -- Barre d'onglets (à droite)
-    local tabBar = Instance.new("Frame")
-    tabBar.Size = UDim2.new(0, 130, 1, -80)
-    tabBar.Position = UDim2.new(1, -130, 0, 80)
-    tabBar.BackgroundColor3 = currentTheme.TabBackground
-    tabBar.BorderSizePixel = 0
-    tabBar.Parent = mainFrame
-
-    local tabBarLayout = Instance.new("UIListLayout")
-    tabBarLayout.FillDirection = Enum.FillDirection.Vertical -- Onglets verticaux
-    tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    tabBarLayout.Padding = UDim.new(0, 5)
-    tabBarLayout.Parent = tabBar
-
     -- Zone de contenu des onglets
     local contentFrame = Instance.new("Frame")
-    contentFrame.Size = UDim2.new(1, -260, 1, -80) -- Espace pour sidebar et onglets
-    contentFrame.Position = UDim2.new(0, 130, 0, 40)
+    contentFrame.Size = UDim2.new(1, -130, 1, -80)
+    contentFrame.Position = UDim2.new(0, 130, 0, 80)
     contentFrame.BackgroundColor3 = currentTheme.SectionBackground
     contentFrame.BorderSizePixel = 0
     contentFrame.Parent = mainFrame
@@ -271,7 +259,7 @@ function XyloKitUI:CreateWindow(title)
 
         -- Bouton de l'onglet
         local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(1, 0, 0, 40)
+        tabButton.Size = UDim2.new(0, 100, 1, 0)
         tabButton.BackgroundColor3 = currentTheme.TabBackground
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
@@ -316,10 +304,6 @@ function XyloKitUI:CreateWindow(title)
         tabContentLayout.Padding = UDim.new(0, 10) -- Espacement entre sections
         tabContentLayout.Parent = tabContent
 
-        local contentPadding = Instance.new("UIPadding")
-        contentPadding.PaddingTop = UDim.new(0, 20) -- Décalage vers le bas
-        contentPadding.Parent = tabContent
-
         tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             tabContent.CanvasSize = UDim2.new(tabContentLayout.AbsoluteContentSize.X / tabContent.AbsoluteSize.X, 0, 0, 0)
         end)
@@ -352,30 +336,19 @@ function XyloKitUI:CreateWindow(title)
             section.Name = name
 
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 180, 0, 300) -- Rectangle fixe
+            sectionFrame.Size = UDim2.new(0, 180, 1, -10) -- Largeur fixe pour chaque section
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = tabContent
 
             local sectionCorner = Instance.new("UICorner")
-            sectionCorner.CornerRadius = UDim.new(0, 6)
+            sectionCorner.CornerRadius = UDim.new(0, 4)
             sectionCorner.Parent = sectionFrame
 
             local sectionStroke = Instance.new("UIStroke")
             sectionStroke.Thickness = 1
             sectionStroke.Color = currentTheme.BorderColor
             sectionStroke.Parent = sectionFrame
-
-            -- Effet d'ombre pour section
-            local sectionShadow = Instance.new("ImageLabel")
-            sectionShadow.Size = UDim2.new(1, 10, 1, 10)
-            sectionShadow.Position = UDim2.new(0, -5, 0, -5)
-            sectionShadow.BackgroundTransparency = 1
-            sectionShadow.Image = "rbxassetid://5028857472"
-            sectionShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-            sectionShadow.ImageTransparency = 0.7
-            sectionShadow.ZIndex = -1
-            sectionShadow.Parent = sectionFrame
 
             local sectionLabel = Instance.new("TextLabel")
             sectionLabel.Size = UDim2.new(1, -10, 0, 25)
@@ -400,7 +373,7 @@ function XyloKitUI:CreateWindow(title)
             sectionPadding.Parent = sectionFrame
 
             sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                sectionFrame.Size = UDim2.new(0, 180, 0, math.max(300, sectionLayout.AbsoluteContentSize.Y + 45))
+                sectionFrame.Size = UDim2.new(0, 180, 0, sectionLayout.AbsoluteContentSize.Y + 45)
             end)
 
             section.Frame = sectionFrame
