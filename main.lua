@@ -78,6 +78,7 @@ local function detectExecutor()
 end
 
 print("Detected Executor: " .. detectExecutor())
+print("test")
 
 -- Création de la fenêtre principale
 function XyloKitUI:CreateWindow(title)
