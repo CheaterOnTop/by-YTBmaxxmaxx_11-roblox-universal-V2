@@ -289,7 +289,6 @@ function XyloKitUI:CreateWindow(title)
 
         -- Contenu de l'onglet
         local tabContent = Instance.new("Frame")
-        tabContent.Size = UDim2.new(0, 0, 0, 0) -- Taille initiale, ajustée dynamiquement
         tabContent.BackgroundTransparency = 1
         tabContent.Visible = false
         tabContent.Parent = contentFrame
@@ -332,12 +331,8 @@ function XyloKitUI:CreateWindow(title)
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = tabContent
 
-            local sectionCorner = Instance.new("UICorner")
-            sectionCorner.CornerRadius = UDim.new(0, 6)
-            sectionCorner.Parent = sectionFrame
-
             local sectionStroke = Instance.new("UIStroke")
-            sectionStroke.Thickness = 1
+            sectionStroke.Thickness = 2 -- Augmenté pour plus de visibilité
             sectionStroke.Color = currentTheme.BorderColor
             sectionStroke.Parent = sectionFrame
 
@@ -384,7 +379,7 @@ function XyloKitUI:CreateWindow(title)
 
             -- Fonction pour créer un toggle
             function section:CreateToggle(name, default, callback)
-                print("Creating toggle: " .. name) -- Débogage
+                print("Creating toggle: " .. name .. " in section " .. section.Name) -- Débogage
                 local toggleFrame = Instance.new("Frame")
                 toggleFrame.Size = UDim2.new(1, -20, 0, 30)
                 toggleFrame.BackgroundTransparency = 1
@@ -435,7 +430,7 @@ function XyloKitUI:CreateWindow(title)
 
             -- Fonction pour créer un slider
             function section:CreateSlider(name, min, max, default, callback)
-                print("Creating slider: " .. name) -- Débogage
+                print("Creating slider: " .. name .. " in section " .. section.Name) -- Débogage
                 local sliderFrame = Instance.new("Frame")
                 sliderFrame.Size = UDim2.new(1, -20, 0, 45)
                 sliderFrame.BackgroundTransparency = 1
@@ -522,7 +517,7 @@ function XyloKitUI:CreateWindow(title)
 
             -- Fonction pour créer un dropdown
             function section:CreateDropdown(name, options, default, callback)
-                print("Creating dropdown: " .. name) -- Débogage
+                print("Creating dropdown: " .. name .. " in section " .. section.Name) -- Débogage
                 local dropdownFrame = Instance.new("Frame")
                 dropdownFrame.Size = UDim2.new(1, -20, 0, 30)
                 dropdownFrame.BackgroundTransparency = 1
