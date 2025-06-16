@@ -299,13 +299,12 @@ function XyloKitUI:CreateWindow(title)
         tabContent.Parent = contentFrame
 
         local tabContentLayout = Instance.new("UIListLayout")
-        tabContentLayout.FillDirection = Enum.FillDirection.Horizontal -- Sections côte à côte
         tabContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        tabContentLayout.Padding = UDim.new(0, 10) -- Espacement entre sections
+        tabContentLayout.Padding = UDim.new(0, 15) -- Espacement entre sections
         tabContentLayout.Parent = tabContent
 
         tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            tabContent.CanvasSize = UDim2.new(tabContentLayout.AbsoluteContentSize.X / tabContent.AbsoluteSize.X, 0, 0, 0)
+            tabContent.CanvasSize = UDim2.new(0, 0, 0, tabContentLayout.AbsoluteContentSize.Y)
         end)
 
         tab.Button = tabButton
@@ -336,7 +335,7 @@ function XyloKitUI:CreateWindow(title)
             section.Name = name
 
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 180, 1, -10) -- Largeur fixe pour chaque section
+            sectionFrame.Size = UDim2.new(1, -10, 0, 0)
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = tabContent
@@ -373,7 +372,7 @@ function XyloKitUI:CreateWindow(title)
             sectionPadding.Parent = sectionFrame
 
             sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                sectionFrame.Size = UDim2.new(0, 180, 0, sectionLayout.AbsoluteContentSize.Y + 45)
+                sectionFrame.Size = UDim2.new(1, -10, 0, sectionLayout.AbsoluteContentSize.Y + 45)
             end)
 
             section.Frame = sectionFrame
