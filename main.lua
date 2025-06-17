@@ -85,7 +85,6 @@ print("Exécuteur détecté : " .. detectExecutor())
 -- Création de la fenêtre principale
 function XyloKitUI:CreateWindow(title)
     print("Création de la fenêtre : " .. title)
-    print("test")
     local XyloKitUIWindow = {}
     XyloKitUIWindow.Configuration = config
 
@@ -281,7 +280,7 @@ function XyloKitUI:CreateWindow(title)
 
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
-        tabContent.Size = UDim2.new(1, -20, 1, -70) -- Ajusté pour le profil en bas
+        tabContent.Size = UDim2.new(1, -20, 1, -110) -- Ajusté pour inclure le profil (70 + padding)
         tabContent.Position = UDim2.new(0, 10, 0, 10)
         tabContent.BackgroundTransparency = 1
         tabContent.Parent = contentFrame
@@ -662,7 +661,7 @@ function XyloKitUI:CreateWindow(title)
         -- Ajout du profil joueur tout en bas à gauche
         local playerInfoFrame = Instance.new("Frame")
         playerInfoFrame.Size = UDim2.new(0, 200, 0, 60)
-        playerInfoFrame.Position = UDim2.new(0, 10, 1, -70) -- Ancré tout en bas à gauche
+        playerInfoFrame.Position = UDim2.new(0, 10, 1, -60) -- Ajusté pour être juste au-dessus du bord inférieur
         playerInfoFrame.AnchorPoint = Vector2.new(0, 1) -- Ancrage au bas
         playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
         playerInfoFrame.BorderSizePixel = 0
