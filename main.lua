@@ -36,7 +36,7 @@ local Themes = {
         SectionBackground = Color3.fromRGB(30, 30, 30),
         TextColor = Color3.fromRGB(255, 60, 60),
         TextHoverColor = Color3.fromRGB(255, 100, 100),
-        BorderColor = Color3.fromRGB(255, 30, 30), -- Contour rouge complet
+        BorderColor = Color3.fromRGB(255, 30, 30),
         SelectedTabColor = Color3.fromRGB(255, 30, 30),
         ButtonBackground = Color3.fromRGB(28, 28, 28),
         ButtonHoverBackground = Color3.fromRGB(40, 40, 40),
@@ -88,9 +88,9 @@ function XyloKitUI:CreateWindow(title)
     local XyloKitUIWindow = {}
     XyloKitUIWindow.Configuration = config
 
-    -- Fond principal (agrandi pour un format rectangulaire)
+    -- Fond principal (format rectangulaire)
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 900, 0, 600) -- Plus large et haut
+    mainFrame.Size = UDim2.new(0, 900, 0, 600)
     mainFrame.Position = UDim2.new(0.5, -450, 0.5, -300)
     mainFrame.BackgroundColor3 = currentTheme.MainBackground
     mainFrame.BorderSizePixel = 0
@@ -159,7 +159,7 @@ function XyloKitUI:CreateWindow(title)
     -- Titre
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Size = UDim2.new(1, -180, 0, 50)
-    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+    titleLabel.Position = UDim2.new(0, 150, 0, 0)
     titleLabel.BackgroundTransparency = 1
     titleLabel.Text = title
     titleLabel.TextColor3 = currentTheme.TextColor
@@ -168,9 +168,9 @@ function XyloKitUI:CreateWindow(title)
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.Parent = mainFrame
 
-    -- Barre d'onglets (retour à la disposition horizontale)
+    -- Barre latérale pour les onglets
     local tabBar = Instance.new("Frame")
-    tabBar.Size = UDim2.new(1, 0, 0, 40)
+    tabBar.Size = UDim2.new(0, 150, 1, -50)
     tabBar.Position = UDim2.new(0, 0, 0, 50)
     tabBar.BackgroundColor3 = currentTheme.TabBackground
     tabBar.BorderSizePixel = 0
@@ -182,15 +182,15 @@ function XyloKitUI:CreateWindow(title)
     tabBarStroke.Parent = tabBar
 
     local tabBarLayout = Instance.new("UIListLayout")
-    tabBarLayout.FillDirection = Enum.FillDirection.Horizontal
+    tabBarLayout.FillDirection = Enum.FillDirection.Vertical
     tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
     tabBarLayout.Padding = UDim.new(0, 8)
     tabBarLayout.Parent = tabBar
 
-    -- Zone de contenu
+    -- Zone de contenu avec limite de 3 sections visibles
     local contentFrame = Instance.new("Frame")
-    contentFrame.Size = UDim2.new(1, 0, 1, -90)
-    contentFrame.Position = UDim2.new(0, 0, 0, 90)
+    contentFrame.Size = UDim2.new(1, -150, 1, -50)
+    contentFrame.Position = UDim2.new(0, 150, 0, 50)
     contentFrame.BackgroundColor3 = currentTheme.MainBackground
     contentFrame.BorderSizePixel = 0
     contentFrame.Parent = mainFrame
@@ -201,17 +201,17 @@ function XyloKitUI:CreateWindow(title)
 
     -- Bouton de fermeture
     local closeButton = Instance.new("TextButton")
-    closeButton.Size = UDim2.new(0, 40, 0, 40)
-    closeButton.Position = UDim2.new(1, -50, 0, 5)
+    closeButton.Size = UDim2.new(0, 50, 0, 50) -- Bouton plus grand
+    closeButton.Position = UDim2.new(1, -60, 0, 0)
     closeButton.BackgroundColor3 = currentTheme.ButtonBackground
     closeButton.Text = "✕"
     closeButton.TextColor3 = currentTheme.TextColor
-    closeButton.TextSize = 20
+    closeButton.TextSize = 24
     closeButton.Font = Enum.Font.GothamBold
     closeButton.Parent = mainFrame
 
     local closeCorner = Instance.new("UICorner")
-    closeCorner.CornerRadius = UDim.new(0, 8)
+    closeCorner.CornerRadius = UDim.new(0, 10)
     closeCorner.Parent = closeButton
 
     closeButton.MouseButton1Click:Connect(function()
@@ -251,13 +251,13 @@ function XyloKitUI:CreateWindow(title)
         local tab = {}
         tab.Name = name
 
-        -- Bouton de l'onglet (style ancien)
+        -- Bouton de l'onglet (plus grand)
         local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(0, 120, 1, 0)
+        tabButton.Size = UDim2.new(1, -10, 0, 50) -- Hauteur augmentée à 50
         tabButton.BackgroundColor3 = currentTheme.TabBackground
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
-        tabButton.TextSize = 16
+        tabButton.TextSize = 18 -- Texte plus grand
         tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
@@ -268,8 +268,17 @@ function XyloKitUI:CreateWindow(title)
         tabStroke.Parent = tabButton
 
         local tabCorner = Instance.new("UICorner")
-        tabCorner.CornerRadius = UDim.new(0, 8)
+        tabCorner.CornerRadius = UDim.new(0, 10)
         tabCorner.Parent = tabButton
+
+        -- Indicateur de sélection
+        local tabIndicator = Instance.new("Frame")
+        tabIndicator.Size = UDim2.new(0, 4, 1, 0)
+        tabIndicator.Position = UDim2.new(0, 0, 0, 0)
+        tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
+        tabIndicator.BorderSizePixel = 0
+        tabIndicator.Visible = false
+        tabIndicator.Parent = tabButton
 
         -- Effet de survol
         tabButton.MouseEnter:Connect(function()
@@ -288,47 +297,61 @@ function XyloKitUI:CreateWindow(title)
 
         -- Contenu de l'onglet
         local tabContent = Instance.new("ScrollingFrame")
-        tabContent.Size = UDim2.new(1, -20, 1, -110)
-        tabContent.Position = UDim2.new(0, 10, 0, 10)
+        tabContent.Size = UDim2.new(1, -160, 1, -60)
+        tabContent.Position = UDim2.new(0, 160, 0, 50)
         tabContent.BackgroundTransparency = 1
         tabContent.Visible = false
         tabContent.ScrollBarThickness = 4
         tabContent.ScrollBarImageColor3 = currentTheme.BorderColor
         tabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
-        tabContent.Parent = contentFrame
+        tabContent.Parent = mainFrame
 
         local tabContentLayout = Instance.new("UIListLayout")
-        tabContentLayout.FillDirection = Enum.FillDirection.Horizontal
+        tabContentLayout.FillDirection = Enum.FillDirection.Vertical
         tabContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
         tabContentLayout.Padding = UDim.new(0, 15)
-        tabContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+        tabContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
         tabContentLayout.Parent = tabContent
 
+        -- Limiter à 3 sections visibles sans défilement initial
         tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            if tabContent.AbsoluteSize.X > 0 then
-                tabContent.CanvasSize = UDim2.new(0, tabContentLayout.AbsoluteContentSize.X, 0, tabContentLayout.AbsoluteContentSize.Y + 20)
+            local maxHeight = 3 * 200 -- Hauteur estimée pour 3 sections (200px par section)
+            if tabContentLayout.AbsoluteContentSize.Y <= maxHeight then
+                tabContent.CanvasSize = UDim2.new(0, tabContentLayout.AbsoluteContentSize.X, 0, maxHeight)
+                tabContent.Size = UDim2.new(1, -160, 1, -60)
+            else
+                tabContent.CanvasSize = UDim2.new(0, tabContentLayout.AbsoluteContentSize.X, 0, tabContentLayout.AbsoluteContentSize.Y)
             end
         end)
 
         tab.Button = tabButton
+        tab.Content = tabContent
+        tab.Indicator = tabIndicator
         tabs[name] = tab
 
-        -- Gestion du clic
+        -- Gestion du clic (corrigé)
         tabButton.MouseButton1Click:Connect(function()
-            if currentTab ~= tab then
-                if currentTab then
-                    currentTab.Content.Visible = false
-                    local tweenDeselect = TweenService:Create(currentTab.Button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.TabBackground})
-                    tweenDeselect:Play()
-                    currentTab.Button.UIStroke.Color = currentTheme.BorderColor
-                end
-                local tweenSelect = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.SelectedTabBackground})
-                tweenSelect:Play()
-                tabButton.UIStroke.Color = currentTheme.SelectedTabColor
-                tabContent.Visible = true
-                currentTab = tab
+            if currentTab and currentTab.Content then
+                currentTab.Content.Visible = false
+                currentTab.Indicator.Visible = false
+                local tweenDeselect = TweenService:Create(currentTab.Button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.TabBackground})
+                tweenDeselect:Play()
+                currentTab.Button.UIStroke.Color = currentTheme.BorderColor
             end
+            local tweenSelect = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.SelectedTabBackground})
+            tweenSelect:Play()
+            tabIndicator.Visible = true
+            tabContent.Visible = true
+            currentTab = tab
         end)
+
+        if not currentTab then
+            tabContent.Visible = true
+            tabIndicator.Visible = true
+            tabButton.BackgroundColor3 = currentTheme.SelectedTabBackground
+            tabButton.UIStroke.Color = currentTheme.SelectedTabColor
+            currentTab = tab
+        end
 
         -- Création d'une section (rectangulaire)
         function tab:CreateSection(name)
@@ -337,7 +360,7 @@ function XyloKitUI:CreateWindow(title)
             section.Name = name
 
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 250, 0, 0) -- Rectangulaire
+            sectionFrame.Size = UDim2.new(0, 600, 0, 200) -- Rectangulaire, hauteur fixe de 200px
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = tabContent
@@ -345,7 +368,7 @@ function XyloKitUI:CreateWindow(title)
             local sectionStroke = Instance.new("UIStroke")
             sectionStroke.Thickness = 2
             sectionStroke.Color = currentTheme.BorderColor
-            sectionStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border -- Assure un contour complet
+            sectionStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             sectionStroke.Parent = sectionFrame
 
             local sectionLabel = Instance.new("TextLabel")
@@ -370,16 +393,12 @@ function XyloKitUI:CreateWindow(title)
             sectionPadding.PaddingBottom = UDim.new(0, 10)
             sectionPadding.Parent = sectionFrame
 
-            sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                sectionFrame.Size = UDim2.new(0, 250, 0, sectionLayout.AbsoluteContentSize.Y + 60)
-            end)
-
             section.Frame = sectionFrame
 
             -- Création d'un toggle
             function section:CreateToggle(name, default, callback)
                 local toggleFrame = Instance.new("Frame")
-                toggleFrame.Size = UDim2.new(1, -20, 0, 35)
+                toggleFrame.Size = UDim2.new(1, -20, 0, 40)
                 toggleFrame.BackgroundTransparency = 1
                 toggleFrame.Parent = sectionFrame
 
@@ -395,24 +414,24 @@ function XyloKitUI:CreateWindow(title)
                 toggleLabel.Parent = toggleFrame
 
                 local toggleButton = Instance.new("TextButton")
-                toggleButton.Size = UDim2.new(0, 30, 0, 20)
-                toggleButton.Position = UDim2.new(1, -35, 0, 7)
+                toggleButton.Size = UDim2.new(0, 40, 0, 30) -- Bouton plus grand
+                toggleButton.Position = UDim2.new(1, -45, 0, 5)
                 toggleButton.BackgroundColor3 = default and currentTheme.TextColor or currentTheme.ButtonBackground
                 toggleButton.Text = ""
                 toggleButton.Parent = toggleFrame
 
                 local toggleCorner = Instance.new("UICorner")
-                toggleCorner.CornerRadius = UDim.new(0, 10)
+                toggleCorner.CornerRadius = UDim.new(0, 15)
                 toggleCorner.Parent = toggleButton
 
                 local toggleInner = Instance.new("Frame")
-                toggleInner.Size = UDim2.new(0, 14, 0, 14)
+                toggleInner.Size = UDim2.new(0, 18, 0, 18)
                 toggleInner.Position = UDim2.new(default and 0.55 or 0.1, 0, 0.15, 0)
                 toggleInner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 toggleInner.Parent = toggleButton
 
                 local toggleInnerCorner = Instance.new("UICorner")
-                toggleInnerCorner.CornerRadius = UDim.new(0, 7)
+                toggleInnerCorner.CornerRadius = UDim.new(0, 9)
                 toggleInnerCorner.Parent = toggleInner
 
                 local state = default
@@ -448,7 +467,7 @@ function XyloKitUI:CreateWindow(title)
             -- Création d'un slider
             function section:CreateSlider(name, min, max, default, callback)
                 local sliderFrame = Instance.new("Frame")
-                sliderFrame.Size = UDim2.new(1, -20, 0, 50)
+                sliderFrame.Size = UDim2.new(1, -20, 0, 60)
                 sliderFrame.BackgroundTransparency = 1
                 sliderFrame.Parent = sectionFrame
 
@@ -464,13 +483,13 @@ function XyloKitUI:CreateWindow(title)
                 sliderLabel.Parent = sliderFrame
 
                 local sliderBar = Instance.new("Frame")
-                sliderBar.Size = UDim2.new(1, -10, 0, 6)
+                sliderBar.Size = UDim2.new(1, -10, 0, 8)
                 sliderBar.Position = UDim2.new(0, 5, 0, 30)
                 sliderBar.BackgroundColor3 = currentTheme.ButtonBackground
                 sliderBar.Parent = sliderFrame
 
                 local sliderBarCorner = Instance.new("UICorner")
-                sliderBarCorner.CornerRadius = UDim.new(0, 3)
+                sliderBarCorner.CornerRadius = UDim.new(0, 4)
                 sliderBarCorner.Parent = sliderBar
 
                 local sliderFill = Instance.new("Frame")
@@ -480,25 +499,25 @@ function XyloKitUI:CreateWindow(title)
                 sliderFill.Parent = sliderBar
 
                 local sliderFillCorner = Instance.new("UICorner")
-                sliderFillCorner.CornerRadius = UDim.new(0, 3)
+                sliderFillCorner.CornerRadius = UDim.new(0, 4)
                 sliderFillCorner.Parent = sliderFill
 
                 local sliderButton = Instance.new("TextButton")
-                sliderButton.Size = UDim2.new(0, 16, 0, 16)
-                sliderButton.Position = UDim2.new((default - min) / (max - min), -8, 0, -5)
+                sliderButton.Size = UDim2.new(0, 20, 0, 20) -- Bouton plus grand
+                sliderButton.Position = UDim2.new((default - min) / (max - min), -10, 0, -6)
                 sliderButton.BackgroundColor3 = currentTheme.TextColor
                 sliderButton.Text = ""
                 sliderButton.Parent = sliderBar
 
                 local sliderButtonCorner = Instance.new("UICorner")
-                sliderButtonCorner.CornerRadius = UDim.new(0, 8)
+                sliderButtonCorner.CornerRadius = UDim.new(0, 10)
                 sliderButtonCorner.Parent = sliderButton
 
                 local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Slider"
                 if config[configKey] ~= nil then
                     default = config[configKey]
                     sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-                    sliderButton.Position = UDim2.new((default - min) / (max - min), -8, 0, -5)
+                    sliderButton.Position = UDim2.new((default - min) / (max - min), -10, 0, -6)
                     sliderLabel.Text = name .. ": " .. default
                 end
 
@@ -522,7 +541,7 @@ function XyloKitUI:CreateWindow(title)
                         relativePos = math.clamp(relativePos, 0, 1)
                         local value = math.floor(min + (max - min) * relativePos)
                         local tweenFill = TweenService:Create(sliderFill, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Size = UDim2.new(relativePos, 0, 1, 0)})
-                        local tweenButton = TweenService:Create(sliderButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Position = UDim2.new(relativePos, -8, 0, -5)})
+                        local tweenButton = TweenService:Create(sliderButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Position = UDim2.new(relativePos, -10, 0, -6)})
                         tweenFill:Play()
                         tweenButton:Play()
                         sliderLabel.Text = name .. ": " .. value
@@ -536,7 +555,7 @@ function XyloKitUI:CreateWindow(title)
             -- Création d'un dropdown
             function section:CreateDropdown(name, options, default, callback)
                 local dropdownFrame = Instance.new("Frame")
-                dropdownFrame.Size = UDim2.new(1, -20, 0, 35)
+                dropdownFrame.Size = UDim2.new(1, -20, 0, 40)
                 dropdownFrame.BackgroundTransparency = 1
                 dropdownFrame.Parent = sectionFrame
 
@@ -552,17 +571,17 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.Parent = dropdownFrame
 
                 local dropdownButton = Instance.new("TextButton")
-                dropdownButton.Size = UDim2.new(0, 30, 0, 30)
-                dropdownButton.Position = UDim2.new(1, -35, 0, 2)
+                dropdownButton.Size = UDim2.new(0, 40, 0, 30) -- Bouton plus grand
+                dropdownButton.Position = UDim2.new(1, -45, 0, 5)
                 dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
                 dropdownButton.Text = "▼"
                 dropdownButton.TextColor3 = currentTheme.TextColor
-                dropdownButton.TextSize = 14
+                dropdownButton.TextSize = 16
                 dropdownButton.Font = Enum.Font.Code
                 dropdownButton.Parent = dropdownFrame
 
                 local dropdownButtonCorner = Instance.new("UICorner")
-                dropdownButtonCorner.CornerRadius = UDim.new(0, 8)
+                dropdownButtonCorner.CornerRadius = UDim.new(0, 10)
                 dropdownButtonCorner.Parent = dropdownButton
 
                 dropdownButton.MouseEnter:Connect(function()
@@ -582,11 +601,11 @@ function XyloKitUI:CreateWindow(title)
                 dropdownList.Visible = false
                 dropdownList.ScrollBarThickness = 4
                 dropdownList.ScrollBarImageColor3 = currentTheme.BorderColor
-                dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 30)
+                dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 35)
                 dropdownList.Parent = dropdownFrame
 
                 local dropdownListCorner = Instance.new("UICorner")
-                dropdownListCorner.CornerRadius = UDim.new(0, 8)
+                dropdownListCorner.CornerRadius = UDim.new(0, 10)
                 dropdownListCorner.Parent = dropdownList
 
                 local dropdownListStroke = Instance.new("UIStroke")
@@ -607,7 +626,7 @@ function XyloKitUI:CreateWindow(title)
 
                 for _, option in pairs(options) do
                     local optionButton = Instance.new("TextButton")
-                    optionButton.Size = UDim2.new(1, -10, 0, 25)
+                    optionButton.Size = UDim2.new(1, -10, 0, 30)
                     optionButton.BackgroundColor3 = currentTheme.ButtonBackground
                     optionButton.Text = option
                     optionButton.TextColor3 = currentTheme.TextColor
@@ -642,7 +661,7 @@ function XyloKitUI:CreateWindow(title)
 
                 dropdownButton.MouseButton1Click:Connect(function()
                     dropdownList.Visible = not dropdownList.Visible
-                    local targetSize = dropdownList.Visible and UDim2.new(0.3, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.3, 0, 0, 0)
+                    local targetSize = dropdownList.Visible and UDim2.new(0.3, 0, 0, math.min(#options * 35, 140)) or UDim2.new(0.3, 0, 0, 0)
                     local tweenSize = TweenService:Create(dropdownList, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = targetSize})
                     tweenSize:Play()
                 end)
@@ -654,10 +673,10 @@ function XyloKitUI:CreateWindow(title)
         return tab
     end
 
-    -- Profil du joueur en bas à droite
+    -- Profil du joueur en bas à gauche
     local playerProfileFrame = Instance.new("Frame")
     playerProfileFrame.Size = UDim2.new(0, 180, 0, 50)
-    playerProfileFrame.Position = UDim2.new(1, -190, 1, -60)
+    playerProfileFrame.Position = UDim2.new(0, 10, 1, -60)
     playerProfileFrame.BackgroundColor3 = currentTheme.TabBackground
     playerProfileFrame.BorderSizePixel = 0
     playerProfileFrame.Parent = mainFrame
