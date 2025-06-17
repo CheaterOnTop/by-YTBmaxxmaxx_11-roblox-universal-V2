@@ -85,6 +85,7 @@ print("Exécuteur détecté : " .. detectExecutor())
 -- Création de la fenêtre principale
 function XyloKitUI:CreateWindow(title)
     print("Création de la fenêtre : " .. title)
+    print("test")
     local XyloKitUIWindow = {}
     XyloKitUIWindow.Configuration = config
 
