@@ -42,7 +42,7 @@ local Themes = {
         ButtonHoverBackground = Color3.fromRGB(40, 40, 40),
         SelectedTabBackground = Color3.fromRGB(36, 36, 36),
         ShadowColor = Color3.fromRGB(0, 0, 0),
-        GradientColor1 = Color3.fromRGB(255, 80, 80), -- Gradient rouge
+        GradientColor1 = Color3.fromRGB(255, 80, 80),
         GradientColor2 = Color3.fromRGB(200, 40, 40)
     }
 }
@@ -90,10 +90,10 @@ function XyloKitUI:CreateWindow(title)
     local XyloKitUIWindow = {}
     XyloKitUIWindow.Configuration = config
 
-    -- Fond principal (format rectangulaire)
+    -- Fond principal (format rectangulaire, hauteur augmentée)
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 900, 0, 600)
-    mainFrame.Position = UDim2.new(0.5, -450, 0.5, -300)
+    mainFrame.Size = UDim2.new(0, 900, 0, 800) -- Hauteur augmentée à 800px
+    mainFrame.Position = UDim2.new(0.5, -450, 0.5, -400)
     mainFrame.BackgroundColor3 = currentTheme.MainBackground
     mainFrame.BorderSizePixel = 0
     mainFrame.ClipsDescendants = true
@@ -155,7 +155,7 @@ function XyloKitUI:CreateWindow(title)
 
     -- Animation d'ouverture
     mainFrame.Position = UDim2.new(0.5, mainFrame.Position.X.Offset, -0.5, 0)
-    local tweenOpen = TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, -300)})
+    local tweenOpen = TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, -400)})
     tweenOpen:Play()
 
     -- Titre
@@ -260,11 +260,11 @@ function XyloKitUI:CreateWindow(title)
 
         -- Bouton de l'onglet (style amélioré)
         local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(1, -10, 0, 60) -- Hauteur augmentée
+        tabButton.Size = UDim2.new(1, -10, 0, 60)
         tabButton.BackgroundColor3 = currentTheme.TabBackground
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
-        tabButton.TextSize = 20 -- Texte plus grand
+        tabButton.TextSize = 20
         tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamBold.json")
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
@@ -367,7 +367,7 @@ function XyloKitUI:CreateWindow(title)
             section.Name = name
 
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 260, 0, 180) -- Légèrement plus petit que la cellule pour padding
+            sectionFrame.Size = UDim2.new(0, 260, 0, 180) -- Ajusté pour 3 rangées
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = tabContent
