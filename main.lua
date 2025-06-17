@@ -190,7 +190,7 @@ function XyloKitUI:CreerFenetre(titre)
     cadreProfil.Size = UDim2.new(1, -20, 0, 80)
     cadreProfil.Position = UDim2.new(0, 10, 0, 10)
     cadreProfil.BackgroundTransparency = 1
-    cadre마nProfil.Parent = barreLaterale
+    cadreProfil.Parent = barreLaterale
 
     local iconeProfil = Instance.new("ImageLabel")
     iconeProfil.Size = UDim2.new(0, 60, 0, 60)
