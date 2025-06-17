@@ -658,13 +658,14 @@ function XyloKitUI:CreateWindow(title)
             return section
         end
 
-        -- Ajout du profil joueur tout en bas à gauche
+-- Ajout du profil joueur tout en bas à gauche
 local playerInfoFrame = Instance.new("Frame")
-playerInfoFrame.Size = UDim2.new(0, 200, 0, 60)
-playerInfoFrame.Position = UDim2.new(0, 10, 1, -10) -- Positionné à 10 pixels du bas et de la gauche
+playerInfoFrame.Size = UDim2.new(0, 180, 0, 50) -- Taille légèrement réduite pour plus de compacité
+playerInfoFrame.Position = UDim2.new(0, 0, 1, 0) -- Collé exactement au coin inférieur gauche
 playerInfoFrame.AnchorPoint = Vector2.new(0, 1) -- Ancrage au coin inférieur gauche
 playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
 playerInfoFrame.BorderSizePixel = 0
+playerInfoFrame.ZIndex = 10 -- S'assurer qu'il est au-dessus des autres éléments
 playerInfoFrame.Parent = mainFrame -- Parent à mainFrame pour une position fixe
 
 local playerInfoStroke = Instance.new("UIStroke")
@@ -673,19 +674,19 @@ playerInfoStroke.Color = currentTheme.BorderColor
 playerInfoStroke.Parent = playerInfoFrame
 
 local playerIcon = Instance.new("ImageLabel")
-playerIcon.Size = UDim2.new(0, 40, 0, 40)
-playerIcon.Position = UDim2.new(0, 5, 0.5, -20) -- Centré verticalement dans le cadre
+playerIcon.Size = UDim2.new(0, 36, 0, 36) -- Icône légèrement plus petite
+playerIcon.Position = UDim2.new(0, 5, 0.5, -18) -- Centré verticalement
 playerIcon.BackgroundTransparency = 1
 playerIcon.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
 playerIcon.Parent = playerInfoFrame
 
 local playerName = Instance.new("TextLabel")
 playerName.Size = UDim2.new(0.7, 0, 1, 0)
-playerName.Position = UDim2.new(0, 50, 0, 0)
+playerName.Position = UDim2.new(0, 45, 0, 0) -- Ajusté pour l'icône plus petite
 playerName.BackgroundTransparency = 1
 playerName.Text = player and player.Name or "Loading..."
 playerName.TextColor3 = currentTheme.TextColor
-playerName.TextSize = 16
+playerName.TextSize = 14 -- Texte légèrement plus petit pour compacité
 playerName.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
 playerName.TextXAlignment = Enum.TextXAlignment.Left
 playerName.Parent = playerInfoFrame
