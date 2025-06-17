@@ -109,7 +109,7 @@ function XyloKitUI:CreerFenetre(titre)
     local ombre = Instance.new("ImageLabel")
     ombre.Size = UDim2.new(1, 20, 1, 20)
     ombre.Position = UDim2.new(0, -10, 0, -10)
-    ombre.BackgroundTransparency = 1 nigh1
+    ombre.BackgroundTransparency = 1
     ombre.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
     ombre.ImageColor3 = themeActuel.CouleurOmbre
     ombre.ImageTransparency = 0.8
