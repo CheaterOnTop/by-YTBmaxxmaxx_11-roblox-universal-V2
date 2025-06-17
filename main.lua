@@ -661,7 +661,7 @@ function XyloKitUI:CreateWindow(title)
 -- Ajout du profil joueur tout en bas à gauche
 local playerInfoFrame = Instance.new("Frame")
 playerInfoFrame.Size = UDim2.new(0, 180, 0, 50) -- Taille légèrement réduite pour plus de compacité
-playerInfoFrame.Position = UDim2.new(0, 0, 1, 0) -- Collé exactement au coin inférieur gauche
+playerInfoFrame.Position = UDim2.new(0, 0, 5, -3) -- Collé exactement au coin inférieur gauche
 playerInfoFrame.AnchorPoint = Vector2.new(0, 1) -- Ancrage au coin inférieur gauche
 playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
 playerInfoFrame.BorderSizePixel = 0
