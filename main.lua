@@ -182,7 +182,7 @@ function XyloKitUI:CreateWindow(title)
     tabBarStroke.Parent = tabBar
 
     local tabBarLayout = Instance.new("UIListLayout")
-    tabBarLayout.FillDirection = Enum.FillDirection
+    tabBarLayout.FillDirection = Enum.FillDirection.Vertical
     tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
     tabBarLayout.Padding = UDim.new(0, 8)
     tabBarLayout.Parent = tabBar
