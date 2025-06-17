@@ -90,32 +90,17 @@ function XyloKitUI:CreateWindow(title)
 
     -- Fond principal
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 900, 0, 500)
-    mainFrame.Position = UDim2.new(0.5, -450, 0.5, -250)
+    mainFrame.Size = UDim2.new(0, 1000, 0, 600) -- Agrandi à 1000x600 pour plus de visibilité
+    mainFrame.Position = UDim2.new(0.5, -500, 0.5, -300)
     mainFrame.BackgroundColor3 = currentTheme.MainBackground
     mainFrame.BorderSizePixel = 0
     mainFrame.ClipsDescendants = true
     mainFrame.Parent = screenGui
 
-    local mainFrameCorner = Instance.new("UICorner")
-    mainFrameCorner.CornerRadius = UDim.new(0, 12)
-    mainFrameCorner.Parent = mainFrame
-
     local mainFrameStroke = Instance.new("UIStroke")
     mainFrameStroke.Thickness = 2
     mainFrameStroke.Color = currentTheme.BorderColor
     mainFrameStroke.Parent = mainFrame
-
-    -- Effet d'ombre
-    local shadow = Instance.new("ImageLabel")
-    shadow.Size = UDim2.new(1, 20, 1, 20)
-    shadow.Position = UDim2.new(0, -10, 0, -10)
-    shadow.BackgroundTransparency = 1
-    shadow.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-    shadow.ImageColor3 = currentTheme.ShadowColor
-    shadow.ImageTransparency = 0.5
-    shadow.ZIndex = 0
-    shadow.Parent = mainFrame
 
     -- Drag-and-drop
     local dragging = false
@@ -153,7 +138,7 @@ function XyloKitUI:CreateWindow(title)
 
     -- Animation d'ouverture
     mainFrame.Position = UDim2.new(0.5, mainFrame.Position.X.Offset, -0.5, 0)
-    local tweenOpen = TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, -250)})
+    local tweenOpen = TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, -300)})
     tweenOpen:Play()
 
     -- Titre
@@ -210,10 +195,6 @@ function XyloKitUI:CreateWindow(title)
     closeButton.TextSize = 20
     closeButton.Font = Enum.Font.GothamBold
     closeButton.Parent = mainFrame
-
-    local closeCorner = Instance.new("UICorner")
-    closeCorner.CornerRadius = UDim.new(0, 8)
-    closeCorner.Parent = closeButton
 
     local closeStroke = Instance.new("UIStroke")
     closeStroke.Thickness = 2
@@ -297,30 +278,45 @@ function XyloKitUI:CreateWindow(title)
             end
         end)
 
-        -- Contenu de l'onglet
-        local tabContent = Instance.new("ScrollingFrame")
-        tabContent.Size = UDim2.new(1, -20, 1, -20)
+        -- Contenu de l'onglet avec deux conteneurs
+        local tabContent = Instance.new("Frame")
+        tabContent.Size = UDim2.new(1, -20, 1, -70) -- Ajusté pour laisser de la place en bas
         tabContent.Position = UDim2.new(0, 10, 0, 10)
         tabContent.BackgroundTransparency = 1
-        tabContent.Visible = false
-        tabContent.ScrollBarThickness = 4
-        tabContent.ScrollBarImageColor3 = currentTheme.BorderColor
-        tabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
         tabContent.Parent = contentFrame
 
-        local tabContentLayout = Instance.new("UIListLayout")
-        tabContentLayout.FillDirection = Enum.FillDirection.Horizontal
-        tabContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        tabContentLayout.Padding = UDim.new(0, 15)
-        tabContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-        tabContentLayout.Parent = tabContent
+        -- Conteneur principal pour les 3 premières sections
+        local topContainer = Instance.new("Frame")
+        topContainer.Size = UDim2.new(1, 0, 0, 200) -- Hauteur fixe pour les 3 premières sections
+        topContainer.Position = UDim2.new(0, 0, 0, 0)
+        topContainer.BackgroundTransparency = 1
+        topContainer.Parent = tabContent
 
-        tabContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            tabContent.CanvasSize = UDim2.new(0, tabContentLayout.AbsoluteContentSize.X + 30, 0, 0)
-        end)
+        local topContainerLayout = Instance.new("UIListLayout")
+        topContainerLayout.FillDirection = Enum.FillDirection.Horizontal
+        topContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        topContainerLayout.Padding = UDim.new(0, 15)
+        topContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+        topContainerLayout.Parent = topContainer
+
+        -- Conteneur inférieur pour les sections supplémentaires
+        local bottomContainer = Instance.new("Frame")
+        bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
+        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Juste en dessous du conteneur principal
+        bottomContainer.BackgroundTransparency = 1
+        bottomContainer.Parent = tabContent
+
+        local bottomContainerLayout = Instance.new("UIListLayout")
+        bottomContainerLayout.FillDirection = Enum.FillDirection.Horizontal
+        bottomContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        bottomContainerLayout.Padding = UDim.new(0, 15)
+        bottomContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+        bottomContainerLayout.Parent = bottomContainer
 
         tab.Button = tabButton
         tab.Content = tabContent
+        tab.TopContainer = topContainer
+        tab.BottomContainer = bottomContainer
         tab.Indicator = tabIndicator
         tabs[name] = tab
 
@@ -330,7 +326,7 @@ function XyloKitUI:CreateWindow(title)
                 if currentTab then
                     currentTab.Content.Visible = false
                     currentTab.Indicator.Visible = false
-                    local tweenDeselect = TweenService:Create(currentTab.Button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.TabBackground})
+                    local tweenDeselect = TweenService:Create(currentTab.Button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTab.TabBackground})
                     tweenDeselect:Play()
                 end
                 local tweenSelect = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.SelectedTabBackground})
@@ -342,6 +338,7 @@ function XyloKitUI:CreateWindow(title)
         end)
 
         -- Création d'une section
+        local sectionCount = 0
         function tab:CreateSection(name)
             print("Création de la section : " .. name)
             local section = {}
@@ -351,7 +348,7 @@ function XyloKitUI:CreateWindow(title)
             sectionFrame.Size = UDim2.new(0, 250, 0, 0)
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
-            sectionFrame.Parent = tabContent
+            sectionFrame.Parent = (sectionCount < 3 and topContainer or bottomContainer)
 
             local sectionStroke = Instance.new("UIStroke")
             sectionStroke.Thickness = 2
@@ -384,7 +381,12 @@ function XyloKitUI:CreateWindow(title)
                 sectionFrame.Size = UDim2.new(0, 250, 0, sectionLayout.AbsoluteContentSize.Y + 60)
             end)
 
+            if sectionCount >= 3 then
+                bottomContainer.Size = UDim2.new(1, 0, 0, math.max(bottomContainer.Size.Y.Offset, sectionLayout.AbsoluteContentSize.Y + 60))
+            end
+
             section.Frame = sectionFrame
+            sectionCount = sectionCount + 1
 
             -- Création d'un toggle
             function section:CreateToggle(name, default, callback)
@@ -405,10 +407,14 @@ function XyloKitUI:CreateWindow(title)
                 toggleLabel.Parent = toggleFrame
 
                 local toggleButton = Instance.new("TextButton")
-                toggleButton.Size = UDim2.new(0, 30, 0, 20)
-                toggleButton.Position = UDim2.new(1, -35, 0, 7)
+                toggleButton.Size = UDim2.new(0, 30, 0, 30) -- Bouton carré
+                toggleButton.Position = UDim2.new(1, -35, 0, 2)
                 toggleButton.BackgroundColor3 = default and currentTheme.TextColor or currentTheme.ButtonBackground
-                toggleButton.Text = ""
+                toggleButton.Text = default and "✔" or ""
+                toggleButton.TextColor3 = Color3.fromRGB(0, 255, 0) -- Vert pour le ✔
+                toggleButton.TextSize = 18
+                toggleButton.Font = Enum.Font.GothamBold
+                toggleButton.BorderSizePixel = 0
                 toggleButton.Parent = toggleFrame
 
                 local toggleStroke = Instance.new("UIStroke")
@@ -416,23 +422,12 @@ function XyloKitUI:CreateWindow(title)
                 toggleStroke.Color = currentTheme.BorderColor
                 toggleStroke.Parent = toggleButton
 
-                local toggleInner = Instance.new("Frame")
-                toggleInner.Size = UDim2.new(0, 14, 0, 14)
-                toggleInner.Position = UDim2.new(default and 0.55 or 0.1, 0, 0.15, 0)
-                toggleInner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                toggleInner.Parent = toggleButton
-
-                local toggleInnerStroke = Instance.new("UIStroke")
-                toggleInnerStroke.Thickness = 2
-                toggleInnerStroke.Color = currentTheme.BorderColor
-                toggleInnerStroke.Parent = toggleInner
-
                 local state = default
                 local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Toggle"
                 if config[configKey] ~= nil then
                     state = config[configKey]
                     toggleButton.BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground
-                    toggleInner.Position = UDim2.new(state and 0.55 or 0.1, 0, 0.15, 0)
+                    toggleButton.Text = state and "✔" or ""
                 end
 
                 toggleButton.MouseEnter:Connect(function()
@@ -447,10 +442,8 @@ function XyloKitUI:CreateWindow(title)
 
                 toggleButton.MouseButton1Click:Connect(function()
                     state = not state
-                    local tween = TweenService:Create(toggleButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground})
-                    local tweenInner = TweenService:Create(toggleInner, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Position = UDim2.new(state and 0.55 or 0.1, 0, 0.15, 0)})
-                    tween:Play()
-                    tweenInner:Play()
+                    toggleButton.BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground
+                    toggleButton.Text = state and "✔" or ""
                     config[configKey] = state
                     saveConfig()
                     callback(state)
@@ -567,23 +560,20 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.Parent = dropdownFrame
 
                 local dropdownButton = Instance.new("TextButton")
-                dropdownButton.Size = UDim2.new(0, 30, 0, 30)
+                dropdownButton.Size = UDim2.new(0, 30, 0, 30) -- Bouton carré
                 dropdownButton.Position = UDim2.new(1, -35, 0, 2)
                 dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
                 dropdownButton.Text = "▼"
                 dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextSize = 14
                 dropdownButton.Font = Enum.Font.Code
+                dropdownButton.BorderSizePixel = 0
                 dropdownButton.Parent = dropdownFrame
 
                 local dropdownButtonStroke = Instance.new("UIStroke")
                 dropdownButtonStroke.Thickness = 2
                 dropdownButtonStroke.Color = currentTheme.BorderColor
                 dropdownButtonStroke.Parent = dropdownButton
-
-                local dropdownButtonCorner = Instance.new("UICorner")
-                dropdownButtonCorner.CornerRadius = UDim.new(0, 8)
-                dropdownButtonCorner.Parent = dropdownButton
 
                 dropdownButton.MouseEnter:Connect(function()
                     local tweenHover = TweenService:Create(dropdownButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonHoverBackground})
@@ -610,10 +600,6 @@ function XyloKitUI:CreateWindow(title)
                 dropdownListStroke.Color = currentTheme.BorderColor
                 dropdownListStroke.Parent = dropdownList
 
-                local dropdownListCorner = Instance.new("UICorner")
-                dropdownListCorner.CornerRadius = UDim.new(0, 8)
-                dropdownListCorner.Parent = dropdownList
-
                 local dropdownListLayout = Instance.new("UIListLayout")
                 dropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
                 dropdownListLayout.Padding = UDim.new(0, 5)
@@ -639,10 +625,6 @@ function XyloKitUI:CreateWindow(title)
                     optionButtonStroke.Thickness = 2
                     optionButtonStroke.Color = currentTheme.BorderColor
                     optionButtonStroke.Parent = optionButton
-
-                    local optionButtonCorner = Instance.new("UICorner")
-                    optionButtonCorner.CornerRadius = UDim.new(0, 6)
-                    optionButtonCorner.Parent = optionButton
 
                     optionButton.MouseEnter:Connect(function()
                         local tweenHover = TweenService:Create(optionButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonHoverBackground})
@@ -675,6 +657,37 @@ function XyloKitUI:CreateWindow(title)
 
             return section
         end
+
+        -- Ajout du profil joueur en bas à gauche
+        local playerInfoFrame = Instance.new("Frame")
+        playerInfoFrame.Size = UDim2.new(0, 200, 0, 60)
+        playerInfoFrame.Position = UDim2.new(0, 10, 1, -70)
+        playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
+        playerInfoFrame.BorderSizePixel = 0
+        playerInfoFrame.Parent = tabContent
+
+        local playerInfoStroke = Instance.new("UIStroke")
+        playerInfoStroke.Thickness = 2
+        playerInfoStroke.Color = currentTheme.BorderColor
+        playerInfoStroke.Parent = playerInfoFrame
+
+        local playerIcon = Instance.new("ImageLabel")
+        playerIcon.Size = UDim2.new(0, 40, 0, 40)
+        playerIcon.Position = UDim2.new(0, 5, 0, 10)
+        playerIcon.BackgroundTransparency = 1
+        playerIcon.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
+        playerIcon.Parent = playerInfoFrame
+
+        local playerName = Instance.new("TextLabel")
+        playerName.Size = UDim2.new(0.7, 0, 1, 0)
+        playerName.Position = UDim2.new(0, 50, 0, 0)
+        playerName.BackgroundTransparency = 1
+        playerName.Text = player and player.Name or "Loading..."
+        playerName.TextColor3 = currentTheme.TextColor
+        playerName.TextSize = 16
+        playerName.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+        playerName.TextXAlignment = Enum.TextXAlignment.Left
+        playerName.Parent = playerInfoFrame
 
         return tab
     end
