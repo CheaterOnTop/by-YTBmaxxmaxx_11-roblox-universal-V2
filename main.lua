@@ -28,16 +28,16 @@ screenGui.Parent = player:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 
--- Thème modernisé (noir et rouge)
+-- Thème modernisé (noir et gris-rouge atténué)
 local Themes = {
     Dark = {
         MainBackground = Color3.fromRGB(18, 18, 18),
         TabBackground = Color3.fromRGB(24, 24, 24),
         SectionBackground = Color3.fromRGB(30, 30, 30),
-        TextColor = Color3.fromRGB(255, 60, 60),
-        TextHoverColor = Color3.fromRGB(255, 100, 100),
-        BorderColor = Color3.fromRGB(255, 30, 30),
-        SelectedTabColor = Color3.fromRGB(255, 30, 30),
+        TextColor = Color3.fromRGB(200, 50, 50), -- Rouge atténué
+        TextHoverColor = Color3.fromRGB(220, 80, 80), -- Rouge atténué au survol
+        BorderColor = Color3.fromRGB(200, 50, 50), -- Rouge atténué pour les bordures
+        SelectedTabColor = Color3.fromRGB(200, 50, 50), -- Rouge atténué pour l'indicateur
         ButtonBackground = Color3.fromRGB(28, 28, 28),
         ButtonHoverBackground = Color3.fromRGB(40, 40, 40),
         SelectedTabBackground = Color3.fromRGB(36, 36, 36),
@@ -90,7 +90,7 @@ function XyloKitUI:CreateWindow(title)
 
     -- Fond principal
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 1000, 0, 600) -- Agrandi à 1000x600 pour plus de visibilité
+    mainFrame.Size = UDim2.new(0, 1000, 0, 600) -- Taille agrandie
     mainFrame.Position = UDim2.new(0.5, -500, 0.5, -300)
     mainFrame.BackgroundColor3 = currentTheme.MainBackground
     mainFrame.BorderSizePixel = 0
@@ -245,7 +245,7 @@ function XyloKitUI:CreateWindow(title)
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
         tabButton.TextSize = 16
-        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
 
@@ -280,7 +280,7 @@ function XyloKitUI:CreateWindow(title)
 
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
-        tabContent.Size = UDim2.new(1, -20, 1, -70) -- Ajusté pour laisser de la place en bas
+        tabContent.Size = UDim2.new(1, -20, 1, -70) -- Ajusté pour le profil en bas
         tabContent.Position = UDim2.new(0, 10, 0, 10)
         tabContent.BackgroundTransparency = 1
         tabContent.Parent = contentFrame
@@ -302,7 +302,7 @@ function XyloKitUI:CreateWindow(title)
         -- Conteneur inférieur pour les sections supplémentaires
         local bottomContainer = Instance.new("Frame")
         bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Juste en dessous du conteneur principal
+        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Rapproché vers le haut (réduit de 10 unités)
         bottomContainer.BackgroundTransparency = 1
         bottomContainer.Parent = tabContent
 
@@ -326,7 +326,7 @@ function XyloKitUI:CreateWindow(title)
                 if currentTab then
                     currentTab.Content.Visible = false
                     currentTab.Indicator.Visible = false
-                    local tweenDeselect = TweenService:Create(currentTab.Button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTab.TabBackground})
+                    local tweenDeselect = TweenService:Create(currentTab.Button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.TabBackground})
                     tweenDeselect:Play()
                 end
                 local tweenSelect = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.SelectedTabBackground})
@@ -411,7 +411,7 @@ function XyloKitUI:CreateWindow(title)
                 toggleButton.Position = UDim2.new(1, -35, 0, 2)
                 toggleButton.BackgroundColor3 = default and currentTheme.TextColor or currentTheme.ButtonBackground
                 toggleButton.Text = default and "✔" or ""
-                toggleButton.TextColor3 = Color3.fromRGB(0, 255, 0) -- Vert pour le ✔
+                toggleButton.TextColor3 = Color3.fromRGB(0, 200, 0) -- Vert atténué
                 toggleButton.TextSize = 18
                 toggleButton.Font = Enum.Font.GothamBold
                 toggleButton.BorderSizePixel = 0
@@ -566,7 +566,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButton.Text = "▼"
                 dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextSize = 14
-                dropdownButton.Font = Enum.Font.Code
+                dropdownButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police
                 dropdownButton.BorderSizePixel = 0
                 dropdownButton.Parent = dropdownFrame
 
@@ -618,7 +618,7 @@ function XyloKitUI:CreateWindow(title)
                     optionButton.Text = option
                     optionButton.TextColor3 = currentTheme.TextColor
                     optionButton.TextSize = 14
-                    optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+                    optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police
                     optionButton.Parent = dropdownList
 
                     local optionButtonStroke = Instance.new("UIStroke")
@@ -658,10 +658,10 @@ function XyloKitUI:CreateWindow(title)
             return section
         end
 
-        -- Ajout du profil joueur en bas à gauche
+        -- Ajout du profil joueur tout en bas à gauche
         local playerInfoFrame = Instance.new("Frame")
         playerInfoFrame.Size = UDim2.new(0, 200, 0, 60)
-        playerInfoFrame.Position = UDim2.new(0, 10, 1, -70)
+        playerInfoFrame.Position = UDim2.new(0, 10, 1, -70) -- Position ajustée tout en bas
         playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
         playerInfoFrame.BorderSizePixel = 0
         playerInfoFrame.Parent = tabContent
