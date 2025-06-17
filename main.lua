@@ -245,7 +245,7 @@ function XyloKitUI:CreateWindow(title)
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
         tabButton.TextSize = 16
-        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police
+        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
 
@@ -302,7 +302,7 @@ function XyloKitUI:CreateWindow(title)
         -- Conteneur inférieur pour les sections supplémentaires
         local bottomContainer = Instance.new("Frame")
         bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Rapproché vers le haut (réduit de 10 unités)
+        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Rapproché vers le haut
         bottomContainer.BackgroundTransparency = 1
         bottomContainer.Parent = tabContent
 
@@ -661,7 +661,8 @@ function XyloKitUI:CreateWindow(title)
         -- Ajout du profil joueur tout en bas à gauche
         local playerInfoFrame = Instance.new("Frame")
         playerInfoFrame.Size = UDim2.new(0, 200, 0, 60)
-        playerInfoFrame.Position = UDim2.new(0, 10, 1, -70) -- Position ajustée tout en bas
+        playerInfoFrame.Position = UDim2.new(0, 10, 1, -70) -- Ancré tout en bas à gauche
+        playerInfoFrame.AnchorPoint = Vector2.new(0, 1) -- Ancrage au bas
         playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
         playerInfoFrame.BorderSizePixel = 0
         playerInfoFrame.Parent = tabContent
