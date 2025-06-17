@@ -571,7 +571,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButton.Position = UDim2.new(1, -35, 0, 2)
                 dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
                 dropdownButton.Text = Text"▼"
-                dropdownButton.Text = Color3 = currentTheme.TextColor
+                dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextColor3 = Size = 14
                 dropdownButton.TextSize = Enum.Font.Code
                 dropdownButton.Font = dropdownButton.Parent = dropdownFrame
