@@ -567,14 +567,15 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.Parent = dropdownFrame
 
                 local dropdownButton = Instance.new("TextButton")
-                dropdownButton.Size = UDim2.new(0, 30, 0, 30)
-                dropdownButton.Position = UDim2.new(1, -35, 0, 2)
-                dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
-                dropdownButton.Text = Text"▼"
-                dropdownButton.TextColor3 = currentTheme.TextColor
-                dropdownButton.TextSize = 14
-                dropdownButton.TextSize = Enum.Font.Code
-                dropdownButton.Font = dropdownButton.Parent = dropdownFrame
+dropdownButton.Size = UDim2.new(0, 30, 0, 30)
+dropdownButton.Position = UDim2.new(1, -35, 0, 2)
+dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
+dropdownButton.Text = "▼"
+dropdownButton.TextColor3 = currentTheme.TextColor
+dropdownButton.TextSize = 14
+dropdownButton.Font = Enum.Font.Code
+dropdownButton.Parent = dropdownFrame
+
 
                 local dropdownButtonStroke = Instance.new("UIStroke")
                 dropdownButtonStroke.Thickness = 2
