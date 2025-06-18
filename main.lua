@@ -280,14 +280,14 @@ function XyloKitUI:CreateWindow(title)
 
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
-        tabContent.Size = UDim2.new(1, -20, 1, -110) -- Ajusté pour inclure le profil (70 + padding)
+        tabContent.Size = UDim2.new(1, -20, 1, -110) -- Ajusté pour inclure le profil
         tabContent.Position = UDim2.new(0, 10, 0, 10)
         tabContent.BackgroundTransparency = 1
         tabContent.Parent = contentFrame
 
         -- Conteneur principal pour les 3 premières sections
         local topContainer = Instance.new("Frame")
-        topContainer.Size = UDim2.new(1, 0, 0, 200) -- Hauteur fixe pour les 3 premières sections
+        topContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
         topContainer.Position = UDim2.new(0, 0, 0, 0)
         topContainer.BackgroundTransparency = 1
         topContainer.Parent = tabContent
@@ -302,7 +302,7 @@ function XyloKitUI:CreateWindow(title)
         -- Conteneur inférieur pour les sections 4 à 6
         local bottomContainer = Instance.new("Frame")
         bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Début juste après les 3 premières sections
+        bottomContainer.Position = UDim2.new(0, 0, 0, 0) -- Position ajustée dynamiquement
         bottomContainer.BackgroundTransparency = 1
         bottomContainer.Parent = tabContent
 
@@ -312,6 +312,18 @@ function XyloKitUI:CreateWindow(title)
         bottomContainerLayout.Padding = UDim.new(0, 15)
         bottomContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
         bottomContainerLayout.Parent = bottomContainer
+
+        -- Ajustement dynamique de la position du bottomContainer
+        local function updateContainerPositions()
+            local maxTopHeight = 0
+            for _, child in pairs(topContainer:GetChildren()) do
+                if child:IsA("Frame") and child ~= topContainerLayout then
+                    maxTopHeight = math.max(maxTopHeight, child.AbsoluteSize.Y)
+                end
+            end
+            topContainer.Size = UDim2.new(1, 0, 0, maxTopHeight)
+            bottomContainer.Position = UDim2.new(0, 0, 0, maxTopHeight + 10) -- 10 pixels de padding
+        end
 
         tab.Button = tabButton
         tab.Content = tabContent
@@ -334,6 +346,7 @@ function XyloKitUI:CreateWindow(title)
                 tabIndicator.Visible = true
                 tabContent.Visible = true
                 currentTab = tab
+                updateContainerPositions() -- Mettre à jour les positions au changement d'onglet
             end
         end)
 
@@ -383,9 +396,7 @@ function XyloKitUI:CreateWindow(title)
 
             sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                 sectionFrame.Size = UDim2.new(0, 250, 0, sectionLayout.AbsoluteContentSize.Y + 60)
-                if sectionCount >= 3 then
-                    bottomContainer.Size = UDim2.new(1, 0, 0, math.max(bottomContainer.Size.Y.Offset, sectionLayout.AbsoluteContentSize.Y + 60))
-                end
+                updateContainerPositions() -- Mettre à jour les positions quand la taille change
             end)
 
             section.Frame = sectionFrame
@@ -698,7 +709,7 @@ function XyloKitUI:CreateWindow(title)
         playerProfileImage.Size = UDim2.new(0, 40, 0, 40) -- Taille du cercle
         playerProfileImage.Position = UDim2.new(1, -50, 0.5, -20) -- À droite du nom, centré verticalement
         playerProfileImage.BackgroundTransparency = 1
-        playerProfileImage.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
+        playerProfileImage.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or "rbxassetid://0" -- Image par défaut si aucune photo
         playerProfileImage.Parent = playerInfoFrame
 
         -- Créer un effet de cercle (masquer les coins avec une forme ronde)
@@ -718,5 +729,5 @@ function XyloKitUI:CreateWindow(title)
     return XyloKitUIWindow
 end
 
--- Renvoyer la table XyloKitUI
+-- Renvoyer la table XyloKitUIdq
 return XyloKitUI
