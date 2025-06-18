@@ -245,7 +245,7 @@ function XyloKitUIWindow:CreateTab(name)
     tabButton.Text = name
     tabButton.TextColor3 = currentTheme.TextColor
     tabButton.TextSize = 16
-    tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
+    tabButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json") -- Police neutre et normale
     tabButton.BorderSizePixel = 0
     tabButton.Parent = tabBar
 
@@ -275,60 +275,6 @@ function XyloKitUIWindow:CreateTab(name)
             tabButton.BackgroundColor3 = currentTheme.TabBackground
         end
     end)
-
-    -- Contenu de l'onglet avec deux conteneurs
-    local tabContent = Instance.new("Frame")
-    tabContent.Size = UDim2.new(1, -20, 1, -110) -- Ajusté pour inclure le profil
-    tabContent.Position = UDim2.new(0, 10, 0, 10)
-    tabContent.BackgroundTransparency = 1
-    tabContent.Parent = contentFrame
-
-    -- Conteneur principal pour les 3 premières sections
-    local topContainer = Instance.new("Frame")
-    topContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-    topContainer.Position = UDim2.new(0, 0, 0, 0)
-    topContainer.BackgroundTransparency = 1
-    topContainer.Parent = tabContent
-
-    local topContainerLayout = Instance.new("UIListLayout")
-    topContainerLayout.FillDirection = Enum.FillDirection.Horizontal
-    topContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    topContainerLayout.Padding = UDim.new(0, 15)
-    topContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-    topContainerLayout.Parent = topContainer
-
-    -- Conteneur inférieur pour les sections 4 à 6
-    local bottomContainer = Instance.new("Frame")
-    bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-    bottomContainer.Position = UDim2.new(0, 0, 0, 0) -- Position ajustée dynamiquement
-    bottomContainer.BackgroundTransparency = 1
-    bottomContainer.Parent = tabContent
-
-    local bottomContainerLayout = Instance.new("UIListLayout")
-    bottomContainerLayout.FillDirection = Enum.FillDirection.Horizontal
-    bottomContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    bottomContainerLayout.Padding = UDim.new(0, 15)
-    bottomContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-    bottomContainerLayout.Parent = bottomContainer
-
-    -- Ajustement dynamique de la position du bottomContainer
-    local function updateContainerPositions()
-        local maxTopHeight = 0
-        for _, child in pairs(topContainer:GetChildren()) do
-            if child:IsA("Frame") and child ~= topContainerLayout then
-                maxTopHeight = math.max(maxTopHeight, child.AbsoluteSize.Y)
-            end
-        end
-        topContainer.Size = UDim2.new(1, 0, 0, maxTopHeight)
-        bottomContainer.Position = UDim2.new(0, 0, 0, maxTopHeight + 10) -- 10 pixels de padding
-    end
-
-    tab.Button = tabButton
-    tab.Content = tabContent
-    tab.TopContainer = topContainer
-    tab.BottomContainer = bottomContainer
-    tab.Indicator = tabIndicator
-    tabs[name] = tab
 
     -- Gestion du clic
     tabButton.MouseButton1Click:Connect(function()
