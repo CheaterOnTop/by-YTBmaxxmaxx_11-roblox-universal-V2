@@ -299,10 +299,10 @@ function XyloKitUI:CreateWindow(title)
         topContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
         topContainerLayout.Parent = topContainer
 
-        -- Conteneur inférieur pour les sections supplémentaires
+        -- Conteneur inférieur pour les sections 4 à 6
         local bottomContainer = Instance.new("Frame")
         bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Rapproché vers le haut
+        bottomContainer.Position = UDim2.new(0, 0, 0, 210) -- Début juste après les 3 premières sections
         bottomContainer.BackgroundTransparency = 1
         bottomContainer.Parent = tabContent
 
@@ -337,9 +337,13 @@ function XyloKitUI:CreateWindow(title)
             end
         end)
 
-        -- Création d'une section
+        -- Création d'une section (limité à 6 sections)
         local sectionCount = 0
         function tab:CreateSection(name)
+            if sectionCount >= 6 then
+                warn("Maximum de 6 sections atteint pour cet onglet.")
+                return nil
+            end
             print("Création de la section : " .. name)
             local section = {}
             section.Name = name
@@ -360,10 +364,10 @@ function XyloKitUI:CreateWindow(title)
             sectionLabel.Position = UDim2.new(0, 10, 0, 10)
             sectionLabel.BackgroundTransparency = 1
             sectionLabel.Text = name
-            sectionLabel.TextColor3 = currentTheme.TextColor
+            sectionLabel.TextColor3 = currentTheme.TextColor -- Même couleur que les onglets
             sectionLabel.TextSize = 18
-            sectionLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-            sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+            sectionLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police que les onglets
+            sectionLabel.TextXAlignment = Enum.TextXAlignment.Center -- Centré
             sectionLabel.Parent = sectionFrame
 
             local sectionLayout = Instance.new("UIListLayout")
@@ -379,11 +383,10 @@ function XyloKitUI:CreateWindow(title)
 
             sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                 sectionFrame.Size = UDim2.new(0, 250, 0, sectionLayout.AbsoluteContentSize.Y + 60)
+                if sectionCount >= 3 then
+                    bottomContainer.Size = UDim2.new(1, 0, 0, math.max(bottomContainer.Size.Y.Offset, sectionLayout.AbsoluteContentSize.Y + 60))
+                end
             end)
-
-            if sectionCount >= 3 then
-                bottomContainer.Size = UDim2.new(1, 0, 0, math.max(bottomContainer.Size.Y.Offset, sectionLayout.AbsoluteContentSize.Y + 60))
-            end
 
             section.Frame = sectionFrame
             sectionCount = sectionCount + 1
@@ -407,11 +410,11 @@ function XyloKitUI:CreateWindow(title)
                 toggleLabel.Parent = toggleFrame
 
                 local toggleButton = Instance.new("TextButton")
-                toggleButton.Size = UDim2.new(0, 30, 0, 30) -- Bouton carré
+                toggleButton.Size = UDim2.new(0, 30, 0, 30)
                 toggleButton.Position = UDim2.new(1, -35, 0, 2)
                 toggleButton.BackgroundColor3 = default and currentTheme.TextColor or currentTheme.ButtonBackground
                 toggleButton.Text = default and "✔" or ""
-                toggleButton.TextColor3 = Color3.fromRGB(0, 200, 0) -- Vert atténué
+                toggleButton.TextColor3 = Color3.fromRGB(0, 200, 0)
                 toggleButton.TextSize = 18
                 toggleButton.Font = Enum.Font.GothamBold
                 toggleButton.BorderSizePixel = 0
@@ -560,13 +563,13 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.Parent = dropdownFrame
 
                 local dropdownButton = Instance.new("TextButton")
-                dropdownButton.Size = UDim2.new(0, 30, 0, 30) -- Bouton carré
+                dropdownButton.Size = UDim2.new(0, 30, 0, 30)
                 dropdownButton.Position = UDim2.new(1, -35, 0, 2)
                 dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
                 dropdownButton.Text = "▼"
                 dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextSize = 14
-                dropdownButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police
+                dropdownButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
                 dropdownButton.BorderSizePixel = 0
                 dropdownButton.Parent = dropdownFrame
 
@@ -618,7 +621,7 @@ function XyloKitUI:CreateWindow(title)
                     optionButton.Text = option
                     optionButton.TextColor3 = currentTheme.TextColor
                     optionButton.TextSize = 14
-                    optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police
+                    optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
                     optionButton.Parent = dropdownList
 
                     local optionButtonStroke = Instance.new("UIStroke")
@@ -658,37 +661,56 @@ function XyloKitUI:CreateWindow(title)
             return section
         end
 
--- Ajout du profil joueur tout en bas à gauche
-local playerInfoFrame = Instance.new("Frame")
-playerInfoFrame.Size = UDim2.new(0, 200, 0, 60)
-playerInfoFrame.Position = UDim2.new(0, 0, 1, 0) -- Positionné à 10 pixels du bas et de la gauche
-playerInfoFrame.AnchorPoint = Vector2.new(0, 1) -- Ancrage au coin inférieur gauche
-playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
-playerInfoFrame.BorderSizePixel = 0
-playerInfoFrame.Parent = mainFrame -- Parent à mainFrame pour une position fixe
+        -- Ajout du profil joueur avec un profil rond à droite
+        local playerInfoFrame = Instance.new("Frame")
+        playerInfoFrame.Size = UDim2.new(0, 250, 0, 60) -- Ajusté pour inclure le profil rond
+        playerInfoFrame.Position = UDim2.new(0, 5, 1, -5) -- Légèrement décalé à droite et vers le haut
+        playerInfoFrame.AnchorPoint = Vector2.new(0, 1)
+        playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
+        playerInfoFrame.BorderSizePixel = 0
+        playerInfoFrame.Parent = mainFrame
 
-local playerInfoStroke = Instance.new("UIStroke")
-playerInfoStroke.Thickness = 2
-playerInfoStroke.Color = currentTheme.BorderColor
-playerInfoStroke.Parent = playerInfoFrame
+        local playerInfoStroke = Instance.new("UIStroke")
+        playerInfoStroke.Thickness = 2
+        playerInfoStroke.Color = currentTheme.BorderColor
+        playerInfoStroke.Parent = playerInfoFrame
 
-local playerIcon = Instance.new("ImageLabel")
-playerIcon.Size = UDim2.new(0, 40, 0, 40)
-playerIcon.Position = UDim2.new(0, 5, 0.5, -20) -- Centré verticalement dans le cadre
-playerIcon.BackgroundTransparency = 1
-playerIcon.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
-playerIcon.Parent = playerInfoFrame
+        local playerIcon = Instance.new("ImageLabel")
+        playerIcon.Size = UDim2.new(0, 40, 0, 40)
+        playerIcon.Position = UDim2.new(0, 5, 0.5, -20)
+        playerIcon.BackgroundTransparency = 1
+        playerIcon.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
+        playerIcon.Parent = playerInfoFrame
 
-local playerName = Instance.new("TextLabel")
-playerName.Size = UDim2.new(0.7, 0, 1, 0)
-playerName.Position = UDim2.new(0, 50, 0, 0)
-playerName.BackgroundTransparency = 1
-playerName.Text = player and player.Name or "Loading..."
-playerName.TextColor3 = currentTheme.TextColor
-playerName.TextSize = 16
-playerName.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-playerName.TextXAlignment = Enum.TextXAlignment.Left
-playerName.Parent = playerInfoFrame
+        local playerName = Instance.new("TextLabel")
+        playerName.Size = UDim2.new(0.7, 0, 1, 0)
+        playerName.Position = UDim2.new(0, 50, 0, 0)
+        playerName.BackgroundTransparency = 1
+        playerName.Text = player and player.Name or "Loading..."
+        playerName.TextColor3 = currentTheme.TextColor
+        playerName.TextSize = 16
+        playerName.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+        playerName.TextXAlignment = Enum.TextXAlignment.Left
+        playerName.Parent = playerInfoFrame
+
+        -- Profil rond à droite du nom
+        local playerProfileImage = Instance.new("ImageLabel")
+        playerProfileImage.Size = UDim2.new(0, 40, 0, 40) -- Taille du cercle
+        playerProfileImage.Position = UDim2.new(1, -50, 0.5, -20) -- À droite du nom, centré verticalement
+        playerProfileImage.BackgroundTransparency = 1
+        playerProfileImage.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
+        playerProfileImage.Parent = playerInfoFrame
+
+        -- Créer un effet de cercle (masquer les coins avec une forme ronde)
+        playerProfileImage.ImageRectSize = Vector2.new(40, 40) -- Taille de l'image recadrée
+        playerProfileImage.ImageRectOffset = Vector2.new(0, 0) -- Début de l'image
+        playerProfileImage.ScaleType = Enum.ScaleType.Fit -- Ajuster l'image
+        local circleMask = Instance.new("ImageLabel")
+        circleMask.Size = UDim2.new(1, 0, 1, 0)
+        circleMask.BackgroundTransparency = 1
+        circleMask.Image = "rbxassetid://266543268" -- Cercle masque
+        circleMask.ImageColor3 = Color3.new(1, 1, 1)
+        circleMask.Parent = playerProfileImage
 
         return tab
     end
