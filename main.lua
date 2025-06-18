@@ -233,27 +233,30 @@ function XyloKitUI:CreateWindow(title)
     local currentTab = nil
 
     -- Création d'un onglet
-    function XyloKitUIWindow:CreateTab(name)
-        print("Création de l'onglet : " .. name)
-        local tab = {}
-        tab.Name = name
+function XyloKitUIWindow:CreateTab(name)
+    print("Création de l'onglet : " .. name)
+    local tab = {}
+    tab.Name = name
 
-        -- Bouton de l'onglet
-        local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(1, -10, 0, 40)
-        tabButton.BackgroundColor3 = currentTheme.TabBackground
-        tabButton.Text = name
-        tabButton.TextColor3 = currentTheme.TextColor
-        tabButton.TextSize = 16
-        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
-        tabButton.BorderSizePixel = 0
-        tabButton.Parent = tabBar
+    -- Bouton de l'onglet
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(1, -10, 0, 40)
+    tabButton.BackgroundColor3 = currentTheme.TabBackground
+    tabButton.Text = name
+    tabButton.TextColor3 = currentTheme.TextColor
+    tabButton.TextSize = 16
+    -- Utiliser une police standard et légère
+    tabButton.Font = Enum.Font.SourceSans -- Remplace GothamSSM par SourceSans pour un rendu plus léger
+    tabButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular) -- Police régulière, non gras
+    tabButton.TextStrokeTransparency = 1 -- Supprime tout contour de texte
+    tabButton.BorderSizePixel = 0
+    tabButton.Parent = tabBar
 
-        local tabStroke = Instance.new("UIStroke")
-        tabStroke.Thickness = 2
-        tabStroke.Color = currentTheme.BorderColor
-        tabStroke.Parent = tabButton
-
+    local tabStroke = Instance.new("UIStroke")
+    tabStroke.Thickness = 2
+    tabStroke.Color = currentTheme.BorderColor
+    tabStroke.Parent = tabButton
+        
         -- Indicateur de sélection
         local tabIndicator = Instance.new("Frame")
         tabIndicator.Size = UDim2.new(0, 4, 1, 0)
