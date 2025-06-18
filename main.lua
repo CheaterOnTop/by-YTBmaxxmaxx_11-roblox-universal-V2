@@ -238,27 +238,46 @@ function XyloKitUIWindow:CreateTab(name)
     local tab = {}
     tab.Name = name
 
+    -- Créer un conteneur temporaire pour isoler le bouton
+    local tempContainer = Instance.new("Frame")
+    tempContainer.Size = UDim2.new(1, -10, 0, 40)
+    tempContainer.BackgroundTransparency = 1
+    tempContainer.Parent = tabBar
+
     -- Bouton de l'onglet
     local tabButton = Instance.new("TextButton")
-    tabButton.Size = UDim2.new(1, -10, 0, 40)
+    tabButton.Size = UDim2.new(1, 0, 1, 0)
     tabButton.BackgroundColor3 = currentTheme.TabBackground
     tabButton.Text = name
     tabButton.TextColor3 = currentTheme.TextColor
     tabButton.TextSize = 16
-    tabButton.TextStrokeTransparency = 1 -- Supprime le contour
-    tabButton.TextTransparency = 0
+    -- Utiliser une police native sans effet
+    tabButton.Font = Enum.Font.SourceSans
+    tabButton.TextStrokeTransparency = 1 -- Désactive le contour
+    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur
+    tabButton.TextTransparency = 0 -- Texte visible
+    tabButton.RichText = false -- Désactive texte enrichi
     tabButton.BorderSizePixel = 0
-    tabButton.RichText = false -- Désactive tout effet spécial dans le texte
-    tabButton.Parent = tabBar
+    tabButton.TextXAlignment = Enum.TextXAlignment.Center
+    tabButton.TextYAlignment = Enum.TextYAlignment.Center
+    tabButton.ClipsDescendants = true
+    tabButton.Parent = tempContainer
 
-    -- Police fine sans effet gras
-    tabButton.FontFace = Font.new(
-        "rbxasset://fonts/families/SourceSansPro.json", -- Ou GothamSSM si tu préfères
-        Enum.FontWeight.Regular,
-        Enum.FontStyle.Normal
-    )
+    -- Désactiver explicitement tous les effets visuels possibles
+    tabButton.TextWrapped = false -- Empêche le texte de s'enrouler avec des effets
+    tabButton.AutoLocalize = false -- Désactive la localisation qui pourrait modifier le rendu
+    tabButton.LineHeight = 1.0 -- Réinitialise la hauteur des lignes
 
-    -- Bordure du bouton (UIStroke)
+    -- Vérifier les effets hérités du parent
+    local function clearInheritedEffects(button)
+        button.TextStrokeTransparency = 1
+        button.TextStrokeColor3 = Color3.new(0, 0, 0)
+        button.RichText = false
+        button.TextWrapped = false
+    end
+    clearInheritedEffects(tabButton)
+    clearInheritedEffects(tabBar) -- Appliquer aussi au parent
+
     local tabStroke = Instance.new("UIStroke")
     tabStroke.Thickness = 2
     tabStroke.Color = currentTheme.BorderColor
