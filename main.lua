@@ -253,8 +253,8 @@ function XyloKitUIWindow:CreateTab(name)
     tabButton.TextSize = 16
     -- Utiliser une police native sans effet
     tabButton.Font = Enum.Font.SourceSans
+    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur    
     tabButton.TextStrokeTransparency = 1 -- Désactive le contour
-    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur
     tabButton.TextTransparency = 0 -- Texte visible
     tabButton.RichText = false -- Désactive texte enrichi
     tabButton.BorderSizePixel = 0
