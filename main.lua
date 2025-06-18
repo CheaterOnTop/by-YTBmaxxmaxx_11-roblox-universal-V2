@@ -232,7 +232,7 @@ function XyloKitUI:CreateWindow(title)
     local tabs = {}
     local currentTab = nil
 
-    -- Création d'un onglet
+-- Création d'un onglet
 function XyloKitUIWindow:CreateTab(name)
     print("Création de l'onglet : " .. name)
     local tab = {}
@@ -245,11 +245,17 @@ function XyloKitUIWindow:CreateTab(name)
     tabButton.Text = name
     tabButton.TextColor3 = currentTheme.TextColor
     tabButton.TextSize = 16
-    -- Utiliser une police standard sans effet gras
-    tabButton.Font = Enum.Font.SourceSans -- Police par défaut de Roblox, légère
-    tabButton.TextStrokeTransparency = 1 -- Désactive complètement le contour de texte
+    -- Utiliser une police native sans effet
+    tabButton.Font = Enum.Font.SourceSans -- Police standard de Roblox
+    tabButton.TextStrokeTransparency = 1 -- Désactive le contour de texte
+    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur du contour au noir (inactif)
+    tabButton.TextTransparency = 0 -- Assure que le texte est visible
     tabButton.BorderSizePixel = 0
     tabButton.Parent = tabBar
+
+    -- Supprimer tout effet hérité
+    tabButton.ClearTextBounds = true -- Réinitialise les calculs de texte
+    tabButton.RichText = false -- Désactive le texte enrichi qui pourrait ajouter des effets
 
     local tabStroke = Instance.new("UIStroke")
     tabStroke.Thickness = 2
@@ -277,6 +283,8 @@ function XyloKitUIWindow:CreateTab(name)
             tabButton.BackgroundColor3 = currentTheme.TabBackground
         end
     end)
+
+    -- ... (reste du code de CreateTab inchangé)
 
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
