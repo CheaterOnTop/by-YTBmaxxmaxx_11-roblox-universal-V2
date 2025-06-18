@@ -248,23 +248,13 @@ function XyloKitUIWindow:CreateTab(name)
     -- Utiliser une police native sans effet
     tabButton.Font = Enum.Font.SourceSans -- Police standard de Roblox
     tabButton.TextStrokeTransparency = 1 -- Désactive le contour de texte
-    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur du contour
+    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur du contour au noir (inactif)
     tabButton.TextTransparency = 0 -- Assure que le texte est visible
-    tabButton.RichText = false -- Désactive le texte enrichi
     tabButton.BorderSizePixel = 0
-    -- Forcer la réinitialisation des propriétés visuelles
-    tabButton.TextXAlignment = Enum.TextXAlignment.Center -- Centre le texte pour éviter des décalages
-    tabButton.TextYAlignment = Enum.TextYAlignment.Center -- Centre verticalement
-    tabButton.ClipsDescendants = true -- Empêche les effets extérieurs de déborder
     tabButton.Parent = tabBar
 
-    -- Vérifier et désactiver les effets hérités du parent
-    local function clearInheritedEffects(button)
-        button.TextStrokeTransparency = 1
-        button.TextStrokeColor3 = Color3.new(0, 0, 0)
-        button.RichText = false
-    end
-    clearInheritedEffects(tabButton)
+    -- Supprimer tout effet hérité
+    tabButton.RichText = false -- Désactive le texte enrichi qui pourrait ajouter des effets
 
     local tabStroke = Instance.new("UIStroke")
     tabStroke.Thickness = 2
