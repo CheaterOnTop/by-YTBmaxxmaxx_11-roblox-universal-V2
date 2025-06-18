@@ -233,494 +233,489 @@ function XyloKitUI:CreateWindow(title)
     local currentTab = nil
 
     -- Création d'un onglet
-    function XyloKitUIWindow:CreateTab(name)
-        print("Création de l'onglet : " .. name)
-        local tab = {}
-        tab.Name = name
+function XyloKitUIWindow:CreateTab(name)
+    print("Création de l'onglet : " .. name)
+    local tab = {}
+    tab.Name = name
 
-        -- Bouton de l'onglet
-      local tabButton = Instance.new("TextButton")
-tabButton.Size = UDim2.new(1, -10, 0, 40)
-tabButton.BackgroundColor3 = currentTheme.TabBackground
-tabButton.Text = name
-tabButton.TextColor3 = currentTheme.TextColor
-tabButton.TextSize = 16
-tabButton.FontFace = Font.new(
-    "rbxasset://fonts/families/GothamSSM.json",
-    Enum.FontWeight.Regular,
-    Enum.FontStyle.Normal
-)
-tabButton.BorderSizePixel = 0
-tabButton.TextStrokeTransparency = 1 -- Enlève le contour si présent
-tabButton.Parent = tabBar
+    -- Bouton de l'onglet
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(1, -10, 0, 40)
+    tabButton.BackgroundColor3 = currentTheme.TabBackground
+    tabButton.Text = name
+    tabButton.TextColor3 = currentTheme.TextColor
+    tabButton.TextSize = 16
+    tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
+    tabButton.BorderSizePixel = 0
+    tabButton.Parent = tabBar
 
-        local tabStroke = Instance.new("UIStroke")
-        tabStroke.Thickness = 2
-        tabStroke.Color = currentTheme.BorderColor
-        tabStroke.Parent = tabButton
+    local tabStroke = Instance.new("UIStroke")
+    tabStroke.Thickness = 2
+    tabStroke.Color = currentTheme.BorderColor
+    tabStroke.Parent = tabButton
 
-        -- Indicateur de sélection
-        local tabIndicator = Instance.new("Frame")
-        tabIndicator.Size = UDim2.new(0, 4, 1, 0)
-        tabIndicator.Position = UDim2.new(0, 0, 0, 0)
-        tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
-        tabIndicator.BorderSizePixel = 0
-        tabIndicator.Visible = false
-        tabIndicator.Parent = tabButton
+    -- Indicateur de sélection
+    local tabIndicator = Instance.new("Frame")
+    tabIndicator.Size = UDim2.new(0, 4, 1, 0)
+    tabIndicator.Position = UDim2.new(0, 0, 0, 0)
+    tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
+    tabIndicator.BorderSizePixel = 0
+    tabIndicator.Visible = false
+    tabIndicator.Parent = tabButton
 
-        -- Effet de survol supprimé sur le texte
-        tabButton.MouseEnter:Connect(function()
-            if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-            end
-        end)
-
-        tabButton.MouseLeave:Connect(function()
-            if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.TabBackground
-            end
-        end)
-
-        -- Contenu de l'onglet avec deux conteneurs
-        local tabContent = Instance.new("Frame")
-        tabContent.Size = UDim2.new(1, -20, 1, -110) -- Ajusté pour inclure le profil
-        tabContent.Position = UDim2.new(0, 10, 0, 10)
-        tabContent.BackgroundTransparency = 1
-        tabContent.Parent = contentFrame
-
-        -- Conteneur principal pour les 3 premières sections
-        local topContainer = Instance.new("Frame")
-        topContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-        topContainer.Position = UDim2.new(0, 0, 0, 0)
-        topContainer.BackgroundTransparency = 1
-        topContainer.Parent = tabContent
-
-        local topContainerLayout = Instance.new("UIListLayout")
-        topContainerLayout.FillDirection = Enum.FillDirection.Horizontal
-        topContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        topContainerLayout.Padding = UDim.new(0, 15)
-        topContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-        topContainerLayout.Parent = topContainer
-
-        -- Conteneur inférieur pour les sections 4 à 6
-        local bottomContainer = Instance.new("Frame")
-        bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
-        bottomContainer.Position = UDim2.new(0, 0, 0, 0) -- Position ajustée dynamiquement
-        bottomContainer.BackgroundTransparency = 1
-        bottomContainer.Parent = tabContent
-
-        local bottomContainerLayout = Instance.new("UIListLayout")
-        bottomContainerLayout.FillDirection = Enum.FillDirection.Horizontal
-        bottomContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        bottomContainerLayout.Padding = UDim.new(0, 15)
-        bottomContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-        bottomContainerLayout.Parent = bottomContainer
-
-        -- Ajustement dynamique de la position du bottomContainer
-        local function updateContainerPositions()
-            local maxTopHeight = 0
-            for _, child in pairs(topContainer:GetChildren()) do
-                if child:IsA("Frame") and child ~= topContainerLayout then
-                    maxTopHeight = math.max(maxTopHeight, child.AbsoluteSize.Y)
-                end
-            end
-            topContainer.Size = UDim2.new(1, 0, 0, maxTopHeight)
-            bottomContainer.Position = UDim2.new(0, 0, 0, maxTopHeight + 10) -- 10 pixels de padding
+    -- Effet de survol supprimé sur le texte
+    tabButton.MouseEnter:Connect(function()
+        if currentTab ~= tab then
+            tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
         end
+    end)
 
-        tab.Button = tabButton
-        tab.Content = tabContent
-        tab.TopContainer = topContainer
-        tab.BottomContainer = bottomContainer
-        tab.Indicator = tabIndicator
-        tabs[name] = tab
+    tabButton.MouseLeave:Connect(function()
+        if currentTab ~= tab then
+            tabButton.BackgroundColor3 = currentTheme.TabBackground
+        end
+    end)
 
-        -- Gestion du clic
-        tabButton.MouseButton1Click:Connect(function()
-            if currentTab ~= tab then
-                if currentTab then
-                    currentTab.Content.Visible = false
-                    currentTab.Indicator.Visible = false
-                    currentTab.Button.BackgroundColor3 = currentTheme.TabBackground
-                end
-                tabButton.BackgroundColor3 = currentTheme.SelectedTabBackground
-                tabIndicator.Visible = true
-                tabContent.Visible = true
-                currentTab = tab
-                updateContainerPositions() -- Mettre à jour les positions au changement d'onglet
+    -- Contenu de l'onglet avec deux conteneurs
+    local tabContent = Instance.new("Frame")
+    tabContent.Size = UDim2.new(1, -20, 1, -110) -- Ajusté pour inclure le profil
+    tabContent.Position = UDim2.new(0, 10, 0, 10)
+    tabContent.BackgroundTransparency = 1
+    tabContent.Parent = contentFrame
+
+    -- Conteneur principal pour les 3 premières sections
+    local topContainer = Instance.new("Frame")
+    topContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
+    topContainer.Position = UDim2.new(0, 0, 0, 0)
+    topContainer.BackgroundTransparency = 1
+    topContainer.Parent = tabContent
+
+    local topContainerLayout = Instance.new("UIListLayout")
+    topContainerLayout.FillDirection = Enum.FillDirection.Horizontal
+    topContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    topContainerLayout.Padding = UDim.new(0, 15)
+    topContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    topContainerLayout.Parent = topContainer
+
+    -- Conteneur inférieur pour les sections 4 à 6
+    local bottomContainer = Instance.new("Frame")
+    bottomContainer.Size = UDim2.new(1, 0, 0, 0) -- Hauteur dynamique
+    bottomContainer.Position = UDim2.new(0, 0, 0, 0) -- Position ajustée dynamiquement
+    bottomContainer.BackgroundTransparency = 1
+    bottomContainer.Parent = tabContent
+
+    local bottomContainerLayout = Instance.new("UIListLayout")
+    bottomContainerLayout.FillDirection = Enum.FillDirection.Horizontal
+    bottomContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    bottomContainerLayout.Padding = UDim.new(0, 15)
+    bottomContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    bottomContainerLayout.Parent = bottomContainer
+
+    -- Ajustement dynamique de la position du bottomContainer
+    local function updateContainerPositions()
+        local maxTopHeight = 0
+        for _, child in pairs(topContainer:GetChildren()) do
+            if child:IsA("Frame") and child ~= topContainerLayout then
+                maxTopHeight = math.max(maxTopHeight, child.AbsoluteSize.Y)
             end
+        end
+        topContainer.Size = UDim2.new(1, 0, 0, maxTopHeight)
+        bottomContainer.Position = UDim2.new(0, 0, 0, maxTopHeight + 10) -- 10 pixels de padding
+    end
+
+    tab.Button = tabButton
+    tab.Content = tabContent
+    tab.TopContainer = topContainer
+    tab.BottomContainer = bottomContainer
+    tab.Indicator = tabIndicator
+    tabs[name] = tab
+
+    -- Gestion du clic
+    tabButton.MouseButton1Click:Connect(function()
+        if currentTab ~= tab then
+            if currentTab then
+                currentTab.Content.Visible = false
+                currentTab.Indicator.Visible = false
+                currentTab.Button.BackgroundColor3 = currentTheme.TabBackground
+            end
+            tabButton.BackgroundColor3 = currentTheme.SelectedTabBackground
+            tabIndicator.Visible = true
+            tabContent.Visible = true
+            currentTab = tab
+            updateContainerPositions() -- Mettre à jour les positions au changement d'onglet
+        end
+    end)
+
+    -- Création d'une section (limité à 6 sections) avec barre de défilement
+    local sectionCount = 0
+    function tab:CreateSection(name)
+        if sectionCount >= 6 then
+            warn("Maximum de 6 sections atteint pour cet onglet.")
+            return nil
+        end
+        print("Création de la section : " .. name)
+        local section = {}
+        section.Name = name
+
+        local sectionFrame = Instance.new("Frame")
+        sectionFrame.Size = UDim2.new(0, 250, 0, 300) -- Hauteur fixe avec défilement
+        sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
+        sectionFrame.BorderSizePixel = 0
+        sectionFrame.Parent = (sectionCount < 3 and topContainer or bottomContainer)
+
+        local sectionStroke = Instance.new("UIStroke")
+        sectionStroke.Thickness = 2
+        sectionStroke.Color = currentTheme.BorderColor
+        sectionStroke.Parent = sectionFrame
+
+        local sectionLabel = Instance.new("TextLabel")
+        sectionLabel.Size = UDim2.new(1, -20, 0, 30)
+        sectionLabel.Position = UDim2.new(0, 10, 0, 10)
+        sectionLabel.BackgroundTransparency = 1
+        sectionLabel.Text = name
+        sectionLabel.TextColor3 = currentTheme.TextColor
+        sectionLabel.TextSize = 18
+        sectionLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+        sectionLabel.TextXAlignment = Enum.TextXAlignment.Center
+        sectionLabel.Parent = sectionFrame
+
+        local scrollFrame = Instance.new("ScrollingFrame")
+        scrollFrame.Size = UDim2.new(1, -20, 0, 260) -- Hauteur ajustée pour laisser de la place au titre
+        scrollFrame.Position = UDim2.new(0, 10, 0, 40) -- Sous le titre
+        scrollFrame.BackgroundTransparency = 1
+        scrollFrame.BorderSizePixel = 0
+        scrollFrame.ScrollBarThickness = 6
+        scrollFrame.ScrollBarImageColor3 = currentTheme.BorderColor
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+        scrollFrame.Parent = sectionFrame
+
+        local scrollLayout = Instance.new("UIListLayout")
+        scrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        scrollLayout.Padding = UDim.new(0, 8)
+        scrollLayout.Parent = scrollFrame
+
+        local sectionPadding = Instance.new("UIPadding")
+        sectionPadding.PaddingLeft = UDim.new(0, 10)
+        sectionPadding.PaddingTop = UDim.new(0, 0)
+        sectionPadding.PaddingBottom = UDim.new(0, 10)
+        sectionPadding.Parent = scrollFrame
+
+        scrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            scrollFrame.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y)
+            updateContainerPositions() -- Mettre à jour les positions quand le contenu change
         end)
 
-        -- Création d'une section (limité à 6 sections) avec barre de défilement
-        local sectionCount = 0
-        function tab:CreateSection(name)
-            if sectionCount >= 6 then
-                warn("Maximum de 6 sections atteint pour cet onglet.")
-                return nil
+        section.Frame = sectionFrame
+        sectionCount = sectionCount + 1
+
+        -- Création d'un toggle
+        function section:CreateToggle(name, default, callback)
+            local toggleFrame = Instance.new("Frame")
+            toggleFrame.Size = UDim2.new(1, -20, 0, 35)
+            toggleFrame.BackgroundTransparency = 1
+            toggleFrame.Parent = scrollFrame
+
+            local toggleLabel = Instance.new("TextLabel")
+            toggleLabel.Size = UDim2.new(0.7, 0, 1, 0)
+            toggleLabel.Position = UDim2.new(0, 5, 0, 0)
+            toggleLabel.BackgroundTransparency = 1
+            toggleLabel.Text = name
+            toggleLabel.TextColor3 = currentTheme.TextColor
+            toggleLabel.TextSize = 16
+            toggleLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+            toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+            toggleLabel.Parent = toggleFrame
+
+            local toggleButton = Instance.new("TextButton")
+            toggleButton.Size = UDim2.new(0, 30, 0, 30)
+            toggleButton.Position = UDim2.new(1, -35, 0, 2)
+            toggleButton.BackgroundColor3 = default and currentTheme.TextColor or currentTheme.ButtonBackground
+            toggleButton.Text = default and "✔" or ""
+            toggleButton.TextColor3 = Color3.fromRGB(0, 200, 0)
+            toggleButton.TextSize = 18
+            toggleButton.Font = Enum.Font.GothamBold
+            toggleButton.BorderSizePixel = 0
+            toggleButton.Parent = toggleFrame
+
+            local toggleStroke = Instance.new("UIStroke")
+            toggleStroke.Thickness = 2
+            toggleStroke.Color = currentTheme.BorderColor
+            toggleStroke.Parent = toggleButton
+
+            local state = default
+            local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Toggle"
+            if config[configKey] ~= nil then
+                state = config[configKey]
+                toggleButton.BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground
+                toggleButton.Text = state and "✔" or ""
             end
-            print("Création de la section : " .. name)
-            local section = {}
-            section.Name = name
 
-            local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 250, 0, 300) -- Hauteur fixe avec défilement
-            sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
-            sectionFrame.BorderSizePixel = 0
-            sectionFrame.Parent = (sectionCount < 3 and topContainer or bottomContainer)
-
-            local sectionStroke = Instance.new("UIStroke")
-            sectionStroke.Thickness = 2
-            sectionStroke.Color = currentTheme.BorderColor
-            sectionStroke.Parent = sectionFrame
-
-            local sectionLabel = Instance.new("TextLabel")
-            sectionLabel.Size = UDim2.new(1, -20, 0, 30)
-            sectionLabel.Position = UDim2.new(0, 10, 0, 10)
-            sectionLabel.BackgroundTransparency = 1
-            sectionLabel.Text = name
-            sectionLabel.TextColor3 = currentTheme.TextColor
-            sectionLabel.TextSize = 18
-            sectionLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-            sectionLabel.TextXAlignment = Enum.TextXAlignment.Center
-            sectionLabel.Parent = sectionFrame
-
-            local scrollFrame = Instance.new("ScrollingFrame")
-            scrollFrame.Size = UDim2.new(1, -20, 0, 260) -- Hauteur ajustée pour laisser de la place au titre
-            scrollFrame.Position = UDim2.new(0, 10, 0, 40) -- Sous le titre
-            scrollFrame.BackgroundTransparency = 1
-            scrollFrame.BorderSizePixel = 0
-            scrollFrame.ScrollBarThickness = 6
-            scrollFrame.ScrollBarImageColor3 = currentTheme.BorderColor
-            scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-            scrollFrame.Parent = sectionFrame
-
-            local scrollLayout = Instance.new("UIListLayout")
-            scrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            scrollLayout.Padding = UDim.new(0, 8)
-            scrollLayout.Parent = scrollFrame
-
-            local sectionPadding = Instance.new("UIPadding")
-            sectionPadding.PaddingLeft = UDim.new(0, 10)
-            sectionPadding.PaddingTop = UDim.new(0, 0)
-            sectionPadding.PaddingBottom = UDim.new(0, 10)
-            sectionPadding.Parent = scrollFrame
-
-            scrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                scrollFrame.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y)
-                updateContainerPositions() -- Mettre à jour les positions quand le contenu change
+            toggleButton.MouseEnter:Connect(function()
+                local tweenHover = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and currentTheme.TextHoverColor or currentTheme.ButtonHoverBackground})
+                tweenHover:Play()
             end)
 
-            section.Frame = sectionFrame
-            sectionCount = sectionCount + 1
+            toggleButton.MouseLeave:Connect(function()
+                local tweenLeave = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground})
+                tweenLeave:Play()
+            end)
 
-            -- Création d'un toggle
-            function section:CreateToggle(name, default, callback)
-                local toggleFrame = Instance.new("Frame")
-                toggleFrame.Size = UDim2.new(1, -20, 0, 35)
-                toggleFrame.BackgroundTransparency = 1
-                toggleFrame.Parent = scrollFrame
-
-                local toggleLabel = Instance.new("TextLabel")
-                toggleLabel.Size = UDim2.new(0.7, 0, 1, 0)
-                toggleLabel.Position = UDim2.new(0, 5, 0, 0)
-                toggleLabel.BackgroundTransparency = 1
-                toggleLabel.Text = name
-                toggleLabel.TextColor3 = currentTheme.TextColor
-                toggleLabel.TextSize = 16
-                toggleLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-                toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-                toggleLabel.Parent = toggleFrame
-
-                local toggleButton = Instance.new("TextButton")
-                toggleButton.Size = UDim2.new(0, 30, 0, 30)
-                toggleButton.Position = UDim2.new(1, -35, 0, 2)
-                toggleButton.BackgroundColor3 = default and currentTheme.TextColor or currentTheme.ButtonBackground
-                toggleButton.Text = default and "✔" or ""
-                toggleButton.TextColor3 = Color3.fromRGB(0, 200, 0)
-                toggleButton.TextSize = 18
-                toggleButton.Font = Enum.Font.GothamBold
-                toggleButton.BorderSizePixel = 0
-                toggleButton.Parent = toggleFrame
-
-                local toggleStroke = Instance.new("UIStroke")
-                toggleStroke.Thickness = 2
-                toggleStroke.Color = currentTheme.BorderColor
-                toggleStroke.Parent = toggleButton
-
-                local state = default
-                local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Toggle"
-                if config[configKey] ~= nil then
-                    state = config[configKey]
-                    toggleButton.BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground
-                    toggleButton.Text = state and "✔" or ""
-                end
-
-                toggleButton.MouseEnter:Connect(function()
-                    local tweenHover = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and currentTheme.TextHoverColor or currentTheme.ButtonHoverBackground})
-                    tweenHover:Play()
-                end)
-
-                toggleButton.MouseLeave:Connect(function()
-                    local tweenLeave = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground})
-                    tweenLeave:Play()
-                end)
-
-                toggleButton.MouseButton1Click:Connect(function()
-                    state = not state
-                    toggleButton.BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground
-                    toggleButton.Text = state and "✔" or ""
-                    config[configKey] = state
-                    saveConfig()
-                    callback(state)
-                end)
-            end
-
-            -- Création d'un slider
-            function section:CreateSlider(name, min, max, default, callback)
-                local sliderFrame = Instance.new("Frame")
-                sliderFrame.Size = UDim2.new(1, -20, 0, 50)
-                sliderFrame.BackgroundTransparency = 1
-                sliderFrame.Parent = scrollFrame
-
-                local sliderLabel = Instance.new("TextLabel")
-                sliderLabel.Size = UDim2.new(0.6, 0, 0, 20)
-                sliderLabel.Position = UDim2.new(0, 5, 0, 0)
-                sliderLabel.BackgroundTransparency = 1
-                sliderLabel.Text = name .. ": " .. default
-                sliderLabel.TextColor3 = currentTheme.TextColor
-                sliderLabel.TextSize = 16
-                sliderLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-                sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-                sliderLabel.Parent = sliderFrame
-
-                local sliderBar = Instance.new("Frame")
-                sliderBar.Size = UDim2.new(1, -10, 0, 6)
-                sliderBar.Position = UDim2.new(0, 5, 0, 30)
-                sliderBar.BackgroundColor3 = currentTheme.ButtonBackground
-                sliderBar.Parent = sliderFrame
-
-                local sliderBarStroke = Instance.new("UIStroke")
-                sliderBarStroke.Thickness = 2
-                sliderBarStroke.Color = currentTheme.BorderColor
-                sliderBarStroke.Parent = sliderBar
-
-                local sliderFill = Instance.new("Frame")
-                sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-                sliderFill.BackgroundColor3 = currentTheme.TextColor
-                sliderFill.BorderSizePixel = 0
-                sliderFill.Parent = sliderBar
-
-                local sliderFillStroke = Instance.new("UIStroke")
-                sliderFillStroke.Thickness = 2
-                sliderFillStroke.Color = currentTheme.BorderColor
-                sliderFillStroke.Parent = sliderFill
-
-                local sliderButton = Instance.new("TextButton")
-                sliderButton.Size = UDim2.new(0, 16, 0, 16)
-                sliderButton.Position = UDim2.new((default - min) / (max - min), -8, 0, -5)
-                sliderButton.BackgroundColor3 = currentTheme.TextColor
-                sliderButton.Text = ""
-                sliderButton.Parent = sliderBar
-
-                local sliderButtonStroke = Instance.new("UIStroke")
-                sliderButtonStroke.Thickness = 2
-                sliderButtonStroke.Color = currentTheme.BorderColor
-                sliderButtonStroke.Parent = sliderButton
-
-                local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Slider"
-                if config[configKey] ~= nil then
-                    default = config[configKey]
-                    sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-                    sliderButton.Position = UDim2.new((default - min) / (max - min), -8, 0, -5)
-                    sliderLabel.Text = name .. ": " .. default
-                end
-
-                local dragging = false
-                sliderButton.InputBegan:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        dragging = true
-                    end
-                end)
-
-                sliderButton.InputEnded:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                        dragging = false
-                    end
-                end)
-
-                UserInputService.InputChanged:Connect(function(input)
-                    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                        local mousePos = UserInputService:GetMouseLocation()
-                        local relativePos = (mousePos.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X
-                        relativePos = math.clamp(relativePos, 0, 1)
-                        local value = math.floor(min + (max - min) * relativePos)
-                        sliderFill.Size = UDim2.new(relativePos, 0, 1, 0)
-                        sliderButton.Position = UDim2.new(relativePos, -8, 0, -5)
-                        sliderLabel.Text = name .. ": " .. value
-                        config[configKey] = value
-                        saveConfig()
-                        callback(value)
-                    end
-                end)
-            end
-
-           -- Création d'un dropdown
-function section:CreateDropdown(name, options, default, callback)
-    local dropdownFrame = Instance.new("Frame")
-    dropdownFrame.Size = UDim2.new(1, -20, 0, 35)
-    dropdownFrame.BackgroundTransparency = 1
-    dropdownFrame.Parent = scrollFrame
-
-    local dropdownLabel = Instance.new("TextLabel")
-    dropdownLabel.Size = UDim2.new(0.7, 0, 1, 0)
-    dropdownLabel.Position = UDim2.new(0, 5, 0, 0)
-    dropdownLabel.BackgroundTransparency = 1
-    dropdownLabel.Text = name .. ": " .. default
-    dropdownLabel.TextColor3 = currentTheme.TextColor
-    dropdownLabel.TextSize = 16
-    dropdownLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-    dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
-    dropdownLabel.Parent = dropdownFrame
-
-    local dropdownButton = Instance.new("TextButton")
-    dropdownButton.Size = UDim2.new(0, 30, 0, 30)
-    dropdownButton.Position = UDim2.new(1, -35, 0, 2)
-    dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
-    dropdownButton.Text = "▼"
-    dropdownButton.TextColor3 = currentTheme.TextColor
-    dropdownButton.TextSize = 14
-    dropdownButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-    dropdownButton.BorderSizePixel = 0
-    dropdownButton.Parent = dropdownFrame
-
-    local dropdownButtonStroke = Instance.new("UIStroke")
-    dropdownButtonStroke.Thickness = 2
-    dropdownButtonStroke.Color = currentTheme.BorderColor
-    dropdownButtonStroke.Parent = dropdownButton
-
-    dropdownButton.MouseEnter:Connect(function()
-        dropdownButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-    end)
-
-    dropdownButton.MouseLeave:Connect(function()
-        dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
-    end)
-
-    local dropdownList = Instance.new("ScrollingFrame")
-    dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
-    dropdownList.Position = UDim2.new(0.7, 0, 1, 5)
-    dropdownList.BackgroundColor3 = currentTheme.ButtonBackground
-    dropdownList.Visible = false
-    dropdownList.ScrollBarThickness = 4
-    dropdownList.ScrollBarImageColor3 = currentTheme.BorderColor
-    dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 30)
-    dropdownList.Parent = dropdownFrame
-
-    local dropdownListStroke = Instance.new("UIStroke")
-    dropdownListStroke.Thickness = 2
-    dropdownListStroke.Color = currentTheme.BorderColor
-    dropdownListStroke.Parent = dropdownList
-
-    local dropdownListLayout = Instance.new("UIListLayout")
-    dropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    dropdownListLayout.Padding = UDim.new(0, 5)
-    dropdownListLayout.Parent = dropdownList
-
-    local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Dropdown"
-    if config[configKey] ~= nil then
-        default = config[configKey]
-        dropdownLabel.Text = name .. ": " .. default
-    end
-
-    for _, option in pairs(options) do
-        local optionButton = Instance.new("TextButton")
-        optionButton.Size = UDim2.new(1, -10, 0, 25)
-        optionButton.BackgroundColor3 = currentTheme.ButtonBackground
-        optionButton.Text = option
-        optionButton.TextColor3 = currentTheme.TextColor
-        optionButton.TextSize = 14
-        optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
-        optionButton.BorderSizePixel = 0 -- Suppression du contour
-        optionButton.Parent = dropdownList
-
-        optionButton.MouseEnter:Connect(function()
-            optionButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-        end)
-
-        optionButton.MouseLeave:Connect(function()
-            optionButton.BackgroundColor3 = currentTheme.ButtonBackground
-        end)
-
-        optionButton.MouseButton1Click:Connect(function()
-            dropdownLabel.Text = name .. ": " .. option
-            dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
-            dropdownList.Visible = false
-            config[configKey] = option
-            saveConfig()
-            callback(option)
-        end)
-    end
-
-    dropdownButton.MouseButton1Click:Connect(function()
-        dropdownList.Visible = not dropdownList.Visible
-        local targetSize = dropdownList.Visible and UDim2.new(0.3, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.3, 0, 0, 0)
-        dropdownList.Size = targetSize
-    end)
-end
-
-            return section
+            toggleButton.MouseButton1Click:Connect(function()
+                state = not state
+                toggleButton.BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground
+                toggleButton.Text = state and "✔" or ""
+                config[configKey] = state
+                saveConfig()
+                callback(state)
+            end)
         end
 
-        -- Ajout du profil joueur avec un profil rond à droite
-        local playerInfoFrame = Instance.new("Frame")
-        playerInfoFrame.Size = UDim2.new(0, 250, 0, 60) -- Ajusté pour inclure le profil rond
-        playerInfoFrame.Position = UDim2.new(0, 5, 1, -5) -- Légèrement décalé à droite et vers le haut
-        playerInfoFrame.AnchorPoint = Vector2.new(0, 1)
-        playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
-        playerInfoFrame.BorderSizePixel = 0
-        playerInfoFrame.Parent = mainFrame
+        -- Création d'un slider
+        function section:CreateSlider(name, min, max, default, callback)
+            local sliderFrame = Instance.new("Frame")
+            sliderFrame.Size = UDim2.new(1, -20, 0, 50)
+            sliderFrame.BackgroundTransparency = 1
+            sliderFrame.Parent = scrollFrame
 
-        local playerInfoStroke = Instance.new("UIStroke")
-        playerInfoStroke.Thickness = 2
-        playerInfoStroke.Color = currentTheme.BorderColor
-        playerInfoStroke.Parent = playerInfoFrame
+            local sliderLabel = Instance.new("TextLabel")
+            sliderLabel.Size = UDim2.new(0.6, 0, 0, 20)
+            sliderLabel.Position = UDim2.new(0, 5, 0, 0)
+            sliderLabel.BackgroundTransparency = 1
+            sliderLabel.Text = name .. ": " .. default
+            sliderLabel.TextColor3 = currentTheme.TextColor
+            sliderLabel.TextSize = 16
+            sliderLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+            sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+            sliderLabel.Parent = sliderFrame
 
-        local playerIcon = Instance.new("ImageLabel")
-        playerIcon.Size = UDim2.new(0, 40, 0, 40)
-        playerIcon.Position = UDim2.new(0, 5, 0.5, -20)
-        playerIcon.BackgroundTransparency = 1
-        playerIcon.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
-        playerIcon.Parent = playerInfoFrame
+            local sliderBar = Instance.new("Frame")
+            sliderBar.Size = UDim2.new(1, -10, 0, 6)
+            sliderBar.Position = UDim2.new(0, 5, 0, 30)
+            sliderBar.BackgroundColor3 = currentTheme.ButtonBackground
+            sliderBar.Parent = sliderFrame
 
-        local playerName = Instance.new("TextLabel")
-        playerName.Size = UDim2.new(0.7, 0, 1, 0)
-        playerName.Position = UDim2.new(0, 50, 0, 0)
-        playerName.BackgroundTransparency = 1
-        playerName.Text = player and player.Name or "Loading..."
-        playerName.TextColor3 = currentTheme.TextColor
-        playerName.TextSize = 16
-        playerName.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-        playerName.TextXAlignment = Enum.TextXAlignment.Left
-        playerName.Parent = playerInfoFrame
+            local sliderBarStroke = Instance.new("UIStroke")
+            sliderBarStroke.Thickness = 2
+            sliderBarStroke.Color = currentTheme.BorderColor
+            sliderBarStroke.Parent = sliderBar
 
-        -- Profil rond à droite du nom
-        local playerProfileImage = Instance.new("ImageLabel")
-        playerProfileImage.Size = UDim2.new(0, 40, 0, 40) -- Taille du cercle
-        playerProfileImage.Position = UDim2.new(1, -50, 0.5, -20) -- À droite du nom, centré verticalement
-        playerProfileImage.BackgroundTransparency = 1
-        playerProfileImage.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or "rbxassetid://0" -- Image par défaut si aucune photo
-        playerProfileImage.Parent = playerInfoFrame
+            local sliderFill = Instance.new("Frame")
+            sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+            sliderFill.BackgroundColor3 = currentTheme.TextColor
+            sliderFill.BorderSizePixel = 0
+            sliderFill.Parent = sliderBar
 
-        -- Créer un effet de cercle (masquer les coins avec une forme ronde)
-        playerProfileImage.ImageRectSize = Vector2.new(40, 40) -- Taille de l'image recadrée
-        playerProfileImage.ImageRectOffset = Vector2.new(0, 0) -- Début de l'image
-        playerProfileImage.ScaleType = Enum.ScaleType.Fit -- Ajuster l'image
-        local circleMask = Instance.new("ImageLabel")
-        circleMask.Size = UDim2.new(1, 0, 1, 0)
-        circleMask.BackgroundTransparency = 1
-        circleMask.Image = "rbxassetid://266543268" -- Cercle masque
-        circleMask.ImageColor3 = Color3.new(1, 1, 1)
-        circleMask.Parent = playerProfileImage
+            local sliderFillStroke = Instance.new("UIStroke")
+            sliderFillStroke.Thickness = 2
+            sliderFillStroke.Color = currentTheme.BorderColor
+            sliderFillStroke.Parent = sliderFill
+
+            local sliderButton = Instance.new("TextButton")
+            sliderButton.Size = UDim2.new(0, 16, 0, 16)
+            sliderButton.Position = UDim2.new((default - min) / (max - min), -8, 0, -5)
+            sliderButton.BackgroundColor3 = currentTheme.TextColor
+            sliderButton.Text = ""
+            sliderButton.Parent = sliderBar
+
+            local sliderButtonStroke = Instance.new("UIStroke")
+            sliderButtonStroke.Thickness = 2
+            sliderButtonStroke.Color = currentTheme.BorderColor
+            sliderButtonStroke.Parent = sliderButton
+
+            local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Slider"
+            if config[configKey] ~= nil then
+                default = config[configKey]
+                sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+                sliderButton.Position = UDim2.new((default - min) / (max - min), -8, 0, -5)
+                sliderLabel.Text = name .. ": " .. default
+            end
+
+            local dragging = false
+            sliderButton.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = true
+                end
+            end)
+
+            sliderButton.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = false
+                end
+            end)
+
+            UserInputService.InputChanged:Connect(function(input)
+                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                    local mousePos = UserInputService:GetMouseLocation()
+                    local relativePos = (mousePos.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X
+                    relativePos = math.clamp(relativePos, 0, 1)
+                    local value = math.floor(min + (max - min) * relativePos)
+                    sliderFill.Size = UDim2.new(relativePos, 0, 1, 0)
+                    sliderButton.Position = UDim2.new(relativePos, -8, 0, -5)
+                    sliderLabel.Text = name .. ": " .. value
+                    config[configKey] = value
+                    saveConfig()
+                    callback(value)
+                end
+            end)
+        end
+
+        -- Création d'un dropdown
+        function section:CreateDropdown(name, options, default, callback)
+            local dropdownFrame = Instance.new("Frame")
+            dropdownFrame.Size = UDim2.new(1, -20, 0, 35)
+            dropdownFrame.BackgroundTransparency = 1
+            dropdownFrame.Parent = scrollFrame
+
+            local dropdownLabel = Instance.new("TextLabel")
+            dropdownLabel.Size = UDim2.new(0.7, 0, 1, 0)
+            dropdownLabel.Position = UDim2.new(0, 5, 0, 0)
+            dropdownLabel.BackgroundTransparency = 1
+            dropdownLabel.Text = name .. ": " .. default
+            dropdownLabel.TextColor3 = currentTheme.TextColor
+            dropdownLabel.TextSize = 16
+            dropdownLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+            dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
+            dropdownLabel.Parent = dropdownFrame
+
+            local dropdownButton = Instance.new("TextButton")
+            dropdownButton.Size = UDim2.new(0, 30, 0, 30)
+            dropdownButton.Position = UDim2.new(1, -35, 0, 2)
+            dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
+            dropdownButton.Text = "▼"
+            dropdownButton.TextColor3 = currentTheme.TextColor
+            dropdownButton.TextSize = 14
+            dropdownButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+            dropdownButton.BorderSizePixel = 0
+            dropdownButton.Parent = dropdownFrame
+
+            local dropdownButtonStroke = Instance.new("UIStroke")
+            dropdownButtonStroke.Thickness = 2
+            dropdownButtonStroke.Color = currentTheme.BorderColor
+            dropdownButtonStroke.Parent = dropdownButton
+
+            dropdownButton.MouseEnter:Connect(function()
+                dropdownButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
+            end)
+
+            dropdownButton.MouseLeave:Connect(function()
+                dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
+            end)
+
+            local dropdownList = Instance.new("ScrollingFrame")
+            dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
+            dropdownList.Position = UDim2.new(0.7, 0, 1, 5)
+            dropdownList.BackgroundColor3 = currentTheme.ButtonBackground
+            dropdownList.Visible = false
+            dropdownList.ScrollBarThickness = 4
+            dropdownList.ScrollBarImageColor3 = currentTheme.BorderColor
+            dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 30)
+            dropdownList.Parent = dropdownFrame
+
+            local dropdownListStroke = Instance.new("UIStroke")
+            dropdownListStroke.Thickness = 2
+            dropdownListStroke.Color = currentTheme.BorderColor
+            dropdownListStroke.Parent = dropdownList
+
+            local dropdownListLayout = Instance.new("UIListLayout")
+            dropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            dropdownListLayout.Padding = UDim.new(0, 5)
+            dropdownListLayout.Parent = dropdownList
+
+            local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Dropdown"
+            if config[configKey] ~= nil then
+                default = config[configKey]
+                dropdownLabel.Text = name .. ": " .. default
+            end
+
+            for _, option in pairs(options) do
+                local optionButton = Instance.new("TextButton")
+                optionButton.Size = UDim2.new(1, -10, 0, 25)
+                optionButton.BackgroundColor3 = currentTheme.ButtonBackground
+                optionButton.Text = option
+                optionButton.TextColor3 = currentTheme.TextColor
+                optionButton.TextSize = 14
+                optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+                optionButton.BorderSizePixel = 0
+                optionButton.Parent = dropdownList
+
+                optionButton.MouseEnter:Connect(function()
+                    optionButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
+                end)
+
+                optionButton.MouseLeave:Connect(function()
+                    optionButton.BackgroundColor3 = currentTheme.ButtonBackground
+                end)
+
+                optionButton.MouseButton1Click:Connect(function()
+                    dropdownLabel.Text = name .. ": " .. option
+                    dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
+                    dropdownList.Visible = false
+                    config[configKey] = option
+                    saveConfig()
+                    callback(option)
+                end)
+            end
+
+            dropdownButton.MouseButton1Click:Connect(function()
+                dropdownList.Visible = not dropdownList.Visible
+                local targetSize = dropdownList.Visible and UDim2.new(0.3, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.3, 0, 0, 0)
+                dropdownList.Size = targetSize
+            end)
+        end
+
+        return section
+    end
+
+    -- Ajout du profil joueur avec un profil rond à droite
+    local playerInfoFrame = Instance.new("Frame")
+    playerInfoFrame.Size = UDim2.new(0, 250, 0, 60) -- Ajusté pour inclure le profil rond
+    playerInfoFrame.Position = UDim2.new(0, 5, 1, -5) -- Légèrement décalé à droite et vers le haut
+    playerInfoFrame.AnchorPoint = Vector2.new(0, 1)
+    playerInfoFrame.BackgroundColor3 = currentTheme.TabBackground
+    playerInfoFrame.BorderSizePixel = 0
+    playerInfoFrame.Parent = mainFrame
+
+    local playerInfoStroke = Instance.new("UIStroke")
+    playerInfoStroke.Thickness = 2
+    playerInfoStroke.Color = currentTheme.BorderColor
+    playerInfoStroke.Parent = playerInfoFrame
+
+    local playerIcon = Instance.new("ImageLabel")
+    playerIcon.Size = UDim2.new(0, 40, 0, 40)
+    playerIcon.Position = UDim2.new(0, 5, 0.5, -20)
+    playerIcon.BackgroundTransparency = 1
+    playerIcon.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or ""
+    playerIcon.Parent = playerInfoFrame
+
+    local playerName = Instance.new("TextLabel")
+    playerName.Size = UDim2.new(0.7, 0, 1, 0)
+    playerName.Position = UDim2.new(0, 50, 0, 0)
+    playerName.BackgroundTransparency = 1
+    playerName.Text = player and player.Name or "Loading..."
+    playerName.TextColor3 = currentTheme.TextColor
+    playerName.TextSize = 16
+    playerName.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+    playerName.TextXAlignment = Enum.TextXAlignment.Left
+    playerName.Parent = playerInfoFrame
+
+    -- Profil rond à droite du nom
+    local playerProfileImage = Instance.new("ImageLabel")
+    playerProfileImage.Size = UDim2.new(0, 40, 0, 40) -- Taille du cercle
+    playerProfileImage.Position = UDim2.new(1, -50, 0.5, -20) -- À droite du nom, centré verticalement
+    playerProfileImage.BackgroundTransparency = 1
+    playerProfileImage.Image = player and "rbxthumb://id=" .. player.UserId .. "?width=420&height=420" or "rbxassetid://0" -- Image par défaut si aucune photo
+    playerProfileImage.Parent = playerInfoFrame
+
+    -- Créer un effet de cercle (masquer les coins avec une forme ronde)
+    playerProfileImage.ImageRectSize = Vector2.new(40, 40) -- Taille de l'image recadrée
+    playerProfileImage.ImageRectOffset = Vector2.new(0, 0) -- Début de l'image
+    playerProfileImage.ScaleType = Enum.ScaleType.Fit -- Ajuster l'image
+    local circleMask = Instance.new("ImageLabel")
+    circleMask.Size = UDim2.new(1, 0, 1, 0)
+    circleMask.BackgroundTransparency = 1
+    circleMask.Image = "rbxassetid://266543268" -- Cercle masque
+    circleMask.ImageColor3 = Color3.new(1, 1, 1)
+    circleMask.Parent = playerProfileImage
 
         return tab
     end
