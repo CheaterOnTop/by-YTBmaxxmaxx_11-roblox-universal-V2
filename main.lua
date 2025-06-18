@@ -245,10 +245,9 @@ function XyloKitUIWindow:CreateTab(name)
     tabButton.Text = name
     tabButton.TextColor3 = currentTheme.TextColor
     tabButton.TextSize = 16
-    -- Utiliser une police standard et légère
-    tabButton.Font = Enum.Font.SourceSans -- Remplace GothamSSM par SourceSans pour un rendu plus léger
-    tabButton.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular) -- Police régulière, non gras
-    tabButton.TextStrokeTransparency = 1 -- Supprime tout contour de texte
+    -- Utiliser une police standard sans effet gras
+    tabButton.Font = Enum.Font.SourceSans -- Police par défaut de Roblox, légère
+    tabButton.TextStrokeTransparency = 1 -- Désactive complètement le contour de texte
     tabButton.BorderSizePixel = 0
     tabButton.Parent = tabBar
 
@@ -256,28 +255,28 @@ function XyloKitUIWindow:CreateTab(name)
     tabStroke.Thickness = 2
     tabStroke.Color = currentTheme.BorderColor
     tabStroke.Parent = tabButton
-        
-        -- Indicateur de sélection
-        local tabIndicator = Instance.new("Frame")
-        tabIndicator.Size = UDim2.new(0, 4, 1, 0)
-        tabIndicator.Position = UDim2.new(0, 0, 0, 0)
-        tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
-        tabIndicator.BorderSizePixel = 0
-        tabIndicator.Visible = false
-        tabIndicator.Parent = tabButton
 
-        -- Effet de survol supprimé sur le texte
-        tabButton.MouseEnter:Connect(function()
-            if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-            end
-        end)
+    -- Indicateur de sélection
+    local tabIndicator = Instance.new("Frame")
+    tabIndicator.Size = UDim2.new(0, 4, 1, 0)
+    tabIndicator.Position = UDim2.new(0, 0, 0, 0)
+    tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
+    tabIndicator.BorderSizePixel = 0
+    tabIndicator.Visible = false
+    tabIndicator.Parent = tabButton
 
-        tabButton.MouseLeave:Connect(function()
-            if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.TabBackground
-            end
-        end)
+    -- Effet de survol
+    tabButton.MouseEnter:Connect(function()
+        if currentTab ~= tab then
+            tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
+        end
+    end)
+
+    tabButton.MouseLeave:Connect(function()
+        if currentTab ~= tab then
+            tabButton.BackgroundColor3 = currentTheme.TabBackground
+        end
+    end)
 
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
