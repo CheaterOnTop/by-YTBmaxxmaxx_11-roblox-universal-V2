@@ -90,8 +90,8 @@ function XyloKitUI:CreateWindow(title)
 
     -- Fond principal
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 1000, 0, 600) -- Taille agrandie
-    mainFrame.Position = UDim2.new(0.5, -500, 0.5, -300)
+    mainFrame.Size = UDim2.new(0, 1000, 0, 700) -- Hauteur augmentée à 700
+    mainFrame.Position = UDim2.new(0.5, -500, 0.5, -350) -- Ajusté pour centrer avec la nouvelle hauteur
     mainFrame.BackgroundColor3 = currentTheme.MainBackground
     mainFrame.BorderSizePixel = 0
     mainFrame.ClipsDescendants = true
@@ -138,7 +138,7 @@ function XyloKitUI:CreateWindow(title)
 
     -- Animation d'ouverture
     mainFrame.Position = UDim2.new(0.5, mainFrame.Position.X.Offset, -0.5, 0)
-    local tweenOpen = TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, -300)})
+    local tweenOpen = TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, mainFrame.Position.X.Offset, 0.5, -350)})
     tweenOpen:Play()
 
     -- Titre
@@ -263,18 +263,16 @@ function XyloKitUI:CreateWindow(title)
         tabIndicator.Visible = false
         tabIndicator.Parent = tabButton
 
-        -- Effet de survol
+        -- Effet de survol supprimé sur le texte
         tabButton.MouseEnter:Connect(function()
             if currentTab ~= tab then
-                local tweenHover = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonHoverBackground})
-                tweenHover:Play()
+                tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground -- Changement de fond uniquement
             end
         end)
 
         tabButton.MouseLeave:Connect(function()
             if currentTab ~= tab then
-                local tweenLeave = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.TabBackground})
-                tweenLeave:Play()
+                tabButton.BackgroundColor3 = currentTheme.TabBackground -- Retour au fond d'origine
             end
         end)
 
@@ -338,11 +336,9 @@ function XyloKitUI:CreateWindow(title)
                 if currentTab then
                     currentTab.Content.Visible = false
                     currentTab.Indicator.Visible = false
-                    local tweenDeselect = TweenService:Create(currentTab.Button, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.TabBackground})
-                    tweenDeselect:Play()
+                    currentTab.Button.BackgroundColor3 = currentTheme.TabBackground
                 end
-                local tweenSelect = TweenService:Create(tabButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.SelectedTabBackground})
-                tweenSelect:Play()
+                tabButton.BackgroundColor3 = currentTheme.SelectedTabBackground
                 tabIndicator.Visible = true
                 tabContent.Visible = true
                 currentTab = tab
@@ -455,12 +451,12 @@ function XyloKitUI:CreateWindow(title)
                 end
 
                 toggleButton.MouseEnter:Connect(function()
-                    local tweenHover = TweenService:Create(toggleButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = state and currentTheme.TextHoverColor or currentTheme.ButtonHoverBackground})
+                    local tweenHover = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and currentTheme.TextHoverColor or currentTheme.ButtonHoverBackground})
                     tweenHover:Play()
                 end)
 
                 toggleButton.MouseLeave:Connect(function()
-                    local tweenLeave = TweenService:Create(toggleButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground})
+                    local tweenLeave = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and currentTheme.TextColor or currentTheme.ButtonBackground})
                     tweenLeave:Play()
                 end)
 
@@ -553,10 +549,8 @@ function XyloKitUI:CreateWindow(title)
                         local relativePos = (mousePos.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X
                         relativePos = math.clamp(relativePos, 0, 1)
                         local value = math.floor(min + (max - min) * relativePos)
-                        local tweenFill = TweenService:Create(sliderFill, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Size = UDim2.new(relativePos, 0, 1, 0)})
-                        local tweenButton = TweenService:Create(sliderButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Position = UDim2.new(relativePos, -8, 0, -5)})
-                        tweenFill:Play()
-                        tweenButton:Play()
+                        sliderFill.Size = UDim2.new(relativePos, 0, 1, 0)
+                        sliderButton.Position = UDim2.new(relativePos, -8, 0, -5)
                         sliderLabel.Text = name .. ": " .. value
                         config[configKey] = value
                         saveConfig()
@@ -600,13 +594,11 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButtonStroke.Parent = dropdownButton
 
                 dropdownButton.MouseEnter:Connect(function()
-                    local tweenHover = TweenService:Create(dropdownButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonHoverBackground})
-                    tweenHover:Play()
+                    dropdownButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
                 end)
 
                 dropdownButton.MouseLeave:Connect(function()
-                    local tweenLeave = TweenService:Create(dropdownButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonBackground})
-                    tweenLeave:Play()
+                    dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
                 end)
 
                 local dropdownList = Instance.new("ScrollingFrame")
@@ -651,19 +643,16 @@ function XyloKitUI:CreateWindow(title)
                     optionButtonStroke.Parent = optionButton
 
                     optionButton.MouseEnter:Connect(function()
-                        local tweenHover = TweenService:Create(optionButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonHoverBackground})
-                        tweenHover:Play()
+                        optionButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
                     end)
 
                     optionButton.MouseLeave:Connect(function()
-                        local tweenLeave = TweenService:Create(optionButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = currentTheme.ButtonBackground})
-                        tweenLeave:Play()
+                        optionButton.BackgroundColor3 = currentTheme.ButtonBackground
                     end)
 
                     optionButton.MouseButton1Click:Connect(function()
                         dropdownLabel.Text = name .. ": " .. option
-                        local tweenClose = TweenService:Create(dropdownList, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0.3, 0, 0, 0)})
-                        tweenClose:Play()
+                        dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
                         dropdownList.Visible = false
                         config[configKey] = option
                         saveConfig()
@@ -674,8 +663,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButton.MouseButton1Click:Connect(function()
                     dropdownList.Visible = not dropdownList.Visible
                     local targetSize = dropdownList.Visible and UDim2.new(0.3, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.3, 0, 0, 0)
-                    local tweenSize = TweenService:Create(dropdownList, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = targetSize})
-                    tweenSize:Play()
+                    dropdownList.Size = targetSize
                 end)
             end
 
@@ -739,5 +727,5 @@ function XyloKitUI:CreateWindow(title)
     return XyloKitUIWindow
 end
 
--- Renvoyer la table XyloKitUI
+-- Renvoyer la tabld
 return XyloKitUI
