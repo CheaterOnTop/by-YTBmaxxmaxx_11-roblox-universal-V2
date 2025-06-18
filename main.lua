@@ -350,7 +350,7 @@ function XyloKitUI:CreateWindow(title)
             end
         end)
 
-        -- Création d'une section (limité à 6 sections)
+        -- Création d'une section (limité à 6 sections) avec barre de défilement
         local sectionCount = 0
         function tab:CreateSection(name)
             if sectionCount >= 6 then
@@ -362,7 +362,7 @@ function XyloKitUI:CreateWindow(title)
             section.Name = name
 
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(0, 250, 0, 0)
+            sectionFrame.Size = UDim2.new(0, 250, 0, 300) -- Hauteur fixe avec défilement
             sectionFrame.BackgroundColor3 = currentTheme.SectionBackground
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = (sectionCount < 3 and topContainer or bottomContainer)
@@ -377,26 +377,36 @@ function XyloKitUI:CreateWindow(title)
             sectionLabel.Position = UDim2.new(0, 10, 0, 10)
             sectionLabel.BackgroundTransparency = 1
             sectionLabel.Text = name
-            sectionLabel.TextColor3 = currentTheme.TextColor -- Même couleur que les onglets
+            sectionLabel.TextColor3 = currentTheme.TextColor
             sectionLabel.TextSize = 18
-            sectionLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Même police que les onglets
-            sectionLabel.TextXAlignment = Enum.TextXAlignment.Center -- Centré
+            sectionLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+            sectionLabel.TextXAlignment = Enum.TextXAlignment.Center
             sectionLabel.Parent = sectionFrame
 
-            local sectionLayout = Instance.new("UIListLayout")
-            sectionLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            sectionLayout.Padding = UDim.new(0, 8)
-            sectionLayout.Parent = sectionFrame
+            local scrollFrame = Instance.new("ScrollingFrame")
+            scrollFrame.Size = UDim2.new(1, -20, 0, 260) -- Hauteur ajustée pour laisser de la place au titre
+            scrollFrame.Position = UDim2.new(0, 10, 0, 40) -- Sous le titre
+            scrollFrame.BackgroundTransparency = 1
+            scrollFrame.BorderSizePixel = 0
+            scrollFrame.ScrollBarThickness = 6
+            scrollFrame.ScrollBarImageColor3 = currentTheme.BorderColor
+            scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+            scrollFrame.Parent = sectionFrame
+
+            local scrollLayout = Instance.new("UIListLayout")
+            scrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            scrollLayout.Padding = UDim.new(0, 8)
+            scrollLayout.Parent = scrollFrame
 
             local sectionPadding = Instance.new("UIPadding")
             sectionPadding.PaddingLeft = UDim.new(0, 10)
-            sectionPadding.PaddingTop = UDim.new(0, 45)
+            sectionPadding.PaddingTop = UDim.new(0, 0)
             sectionPadding.PaddingBottom = UDim.new(0, 10)
-            sectionPadding.Parent = sectionFrame
+            sectionPadding.Parent = scrollFrame
 
-            sectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                sectionFrame.Size = UDim2.new(0, 250, 0, sectionLayout.AbsoluteContentSize.Y + 60)
-                updateContainerPositions() -- Mettre à jour les positions quand la taille change
+            scrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                scrollFrame.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y)
+                updateContainerPositions() -- Mettre à jour les positions quand le contenu change
             end)
 
             section.Frame = sectionFrame
@@ -407,7 +417,7 @@ function XyloKitUI:CreateWindow(title)
                 local toggleFrame = Instance.new("Frame")
                 toggleFrame.Size = UDim2.new(1, -20, 0, 35)
                 toggleFrame.BackgroundTransparency = 1
-                toggleFrame.Parent = sectionFrame
+                toggleFrame.Parent = scrollFrame
 
                 local toggleLabel = Instance.new("TextLabel")
                 toggleLabel.Size = UDim2.new(0.7, 0, 1, 0)
@@ -469,7 +479,7 @@ function XyloKitUI:CreateWindow(title)
                 local sliderFrame = Instance.new("Frame")
                 sliderFrame.Size = UDim2.new(1, -20, 0, 50)
                 sliderFrame.BackgroundTransparency = 1
-                sliderFrame.Parent = sectionFrame
+                sliderFrame.Parent = scrollFrame
 
                 local sliderLabel = Instance.new("TextLabel")
                 sliderLabel.Size = UDim2.new(0.6, 0, 0, 20)
@@ -560,7 +570,7 @@ function XyloKitUI:CreateWindow(title)
                 local dropdownFrame = Instance.new("Frame")
                 dropdownFrame.Size = UDim2.new(1, -20, 0, 35)
                 dropdownFrame.BackgroundTransparency = 1
-                dropdownFrame.Parent = sectionFrame
+                dropdownFrame.Parent = scrollFrame
 
                 local dropdownLabel = Instance.new("TextLabel")
                 dropdownLabel.Size = UDim2.new(0.7, 0, 1, 0)
@@ -729,5 +739,5 @@ function XyloKitUI:CreateWindow(title)
     return XyloKitUIWindow
 end
 
--- Renvoyer la table XyloKitUIdq
+-- Renvoyer la table XyloKitUI
 return XyloKitUI
