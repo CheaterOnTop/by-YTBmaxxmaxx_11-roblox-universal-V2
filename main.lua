@@ -232,8 +232,7 @@ function XyloKitUI:CreateWindow(title)
     local tabs = {}
     local currentTab = nil
 
-
-    -- Création d'un onglet
+-- Création d'un onglet
 function XyloKitUIWindow:CreateTab(name)
     print("Création de l'onglet : " .. name)
     local tab = {}
@@ -253,7 +252,19 @@ function XyloKitUIWindow:CreateTab(name)
     tabButton.TextTransparency = 0 -- Assure que le texte est visible
     tabButton.RichText = false -- Désactive le texte enrichi
     tabButton.BorderSizePixel = 0
+    -- Forcer la réinitialisation des propriétés visuelles
+    tabButton.TextXAlignment = Enum.TextXAlignment.Center -- Centre le texte pour éviter des décalages
+    tabButton.TextYAlignment = Enum.TextYAlignment.Center -- Centre verticalement
+    tabButton.ClipsDescendants = true -- Empêche les effets extérieurs de déborder
     tabButton.Parent = tabBar
+
+    -- Vérifier et désactiver les effets hérités du parent
+    local function clearInheritedEffects(button)
+        button.TextStrokeTransparency = 1
+        button.TextStrokeColor3 = Color3.new(0, 0, 0)
+        button.RichText = false
+    end
+    clearInheritedEffects(tabButton)
 
     local tabStroke = Instance.new("UIStroke")
     tabStroke.Thickness = 2
@@ -283,6 +294,7 @@ function XyloKitUIWindow:CreateTab(name)
     end)
 
     -- ... (reste du code de CreateTab inchangé)
+    
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
         tabContent.Size = UDim2.new(1, -20, 1, -110) -- Ajusté pour inclure le profil
