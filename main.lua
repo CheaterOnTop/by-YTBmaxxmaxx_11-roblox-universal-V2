@@ -1,77 +1,227 @@
+local RbxAnalyticsService = game:GetService("RbxAnalyticsService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
 -- Table principale de la bibliothèque
 local XyloKitUI = {}
 
--- Services Roblox nécessaires
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-
--- Attendre que le jeu et le joueur soient chargés
-local function waitForGameLoaded()
-    if not game:IsLoaded() then
-        game.Loaded:Wait()
-    end
-    local player = Players.LocalPlayer
-    if not player then
-        Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
-        player = Players.LocalPlayer
-    end
-    return player
-end
-
--- Configuration initiale
-local player = waitForGameLoaded()
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "XyloKitUI"
-screenGui.Parent = player:WaitForChild("PlayerGui")
-screenGui.ResetOnSpawn = false
-screenGui.IgnoreGuiInset = true
-
--- Thème modernisé (noir et gris-rouge atténué)
-local Themes = {
-    Dark = {
-        MainBackground = Color3.fromRGB(18, 18, 18),
-        TabBackground = Color3.fromRGB(24, 24, 24),
-        SectionBackground = Color3.fromRGB(30, 30, 30),
-        TextColor = Color3.fromRGB(200, 50, 50), -- Rouge atténué
-        TextHoverColor = Color3.fromRGB(220, 80, 80), -- Rouge atténué au survol
-        BorderColor = Color3.fromRGB(200, 50, 50), -- Rouge atténué pour les bordures
-        SelectedTabColor = Color3.fromRGB(200, 50, 50), -- Rouge atténué pour l'indicateur
-        ButtonBackground = Color3.fromRGB(28, 28, 28),
-        ButtonHoverBackground = Color3.fromRGB(40, 40, 40),
-        SelectedTabBackground = Color3.fromRGB(36, 36, 36),
-        ShadowColor = Color3.fromRGB(0, 0, 0)
-    }
+-- Configuration du système de clés
+local keyConfig = {
+    keyEnabled = true, -- Activer/désactiver le système de clés (true/false)
+    whitelistEnabled = true, -- Activer/désactiver la vérification HWID (true/false)
+    ApiUrl = "YOUR_API_URL_HERE", -- URL externe pour récupérer les clés et HWID (GitHub raw, Ngrok, etc.)
 }
 
-local currentTheme = Themes.Dark
-
--- Gestion de la configuration
-local config = {}
-local configFileName = "XyloKitUI_Config.json"
-
-local function saveConfig()
-    local success, encoded = pcall(HttpService.JSONEncode, HttpService, config)
-    if success then
-        writefile(configFileName, encoded)
-    end
+-- Fonction pour obtenir le HWID
+local function getHWID()
+    local success, hwid = pcall(function()
+        return RbxAnalyticsService:GetClientId()
+    end)
+    return success and hwid or "Unknown"
 end
 
-local function loadConfig()
-    if isfile(configFileName) then
-        local success, decoded = pcall(HttpService.JSONDecode, HttpService, readfile(configFileName))
-        if success then
-            config = decoded
+-- Fonction pour expulser le joueur
+local function kickPlayer(reason)
+    Players.LocalPlayer:Kick(reason)
+end
+
+-- Vérification de la clé et du HWID
+local function verifyKeyAndHWID(key)
+    local hwid = getHWID()
+    if hwid == "Unknown" then
+        kickPlayer("Erreur: Impossible de récupérer le HWID.")
+        return false
+    end
+
+    -- Récupérer les données depuis l'API
+    local success, response = pcall(function()
+        return HttpService:GetAsync(keyConfig.ApiUrl)
+    end)
+
+    if not success then
+        kickPlayer("Erreur: Impossible de contacter le serveur de vérification.")
+        return false
+    end
+
+    -- Décoder la réponse
+    local decodedResponse
+    success, decodedResponse = pcall(function()
+        return HttpService:JSONDecode(response)
+    end)
+
+    if not success or not decodedResponse then
+        kickPlayer("Erreur: Réponse invalide du serveur.")
+        return false
+    end
+
+    -- Vérifier la clé
+    local keyValid = false
+    if keyConfig.keyEnabled then
+        for _, validKey in ipairs(decodedResponse.keys) do
+            if key == validKey then
+                keyValid = true
+                break
+            end
+        end
+        if not keyValid then
+            kickPlayer("Clé invalide.")
+            return false
         end
     end
+
+    -- Vérifier le HWID
+    local hwidValid = false
+    if keyConfig.whitelistEnabled then
+        for _, validHwid in ipairs(decodedResponse.hwids) do
+            if hwid == validHwid then
+                hwidValid = true
+                break
+            end
+        end
+        if not hwidValid then
+            kickPlayer("HWID non autorisé.")
+            return false
+        end
+    end
+
+    return true
 end
 
-loadConfig()
+-- Interface graphique pour entrer la clé
+local function createKeyPrompt()
+    local player = Players.LocalPlayer
+    local keyGui = Instance.new("ScreenGui")
+    keyGui.Name = "KeyPromptUI"
+    keyGui.Parent = player:WaitForChild("PlayerGui")
+    keyGui.ResetOnSpawn = false
+    keyGui.IgnoreGuiInset = true
 
--- Détection de l'exécuteur
-local executor = identifyexecutor and identifyexecutor() or "Unknown"
-print("Executor détecté : " .. executor)
+    local keyFrame = Instance.new("Frame")
+    keyFrame.Size = UDim2.new(0, 400, 0, 200)
+    keyFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+    keyFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+    keyFrame.BorderSizePixel = 0
+    keyFrame.Parent = keyGui
+
+    local keyFrameStroke = Instance.new("UIStroke")
+    keyFrameStroke.Thickness = 2
+    keyFrameStroke.Color = Color3.fromRGB(200, 50, 50)
+    keyFrameStroke.Parent = keyFrame
+
+    local keyLabel = Instance.new("TextLabel")
+    keyLabel.Size = UDim2.new(1, -20, 0, 40)
+    keyLabel.Position = UDim2.new(0, 10, 0, 10)
+    keyLabel.BackgroundTransparency = 1
+    keyLabel.Text = "Entrez votre clé :"
+    keyLabel.TextColor3 = Color3.fromRGB(200, 50, 50)
+    keyLabel.TextSize = 20
+    keyLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+    keyLabel.TextXAlignment = Enum.TextXAlignment.Center
+    keyLabel.Parent = keyFrame
+
+    local keyInput = Instance.new("TextBox")
+    keyInput.Size = UDim2.new(1, -40, 0, 40)
+    keyInput.Position = UDim2.new(0, 20, 0, 60)
+    keyInput.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    keyInput.Text = ""
+    keyInput.PlaceholderText = "Clé..."
+    keyInput.TextColor3 = Color3.fromRGB(200, 50, 50)
+    keyInput.TextSize = 16
+    keyInput.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+    keyInput.Parent = keyFrame
+
+    local keyInputStroke = Instance.new("UIStroke")
+    keyInputStroke.Thickness = 2
+    keyInputStroke.Color = Color3.fromRGB(200, 50, 50)
+    keyInputStroke.Parent = keyInput
+
+    local submitButton = Instance.new("TextButton")
+    submitButton.Size = UDim2.new(0, 100, 0, 40)
+    submitButton.Position = UDim2.new(0.5, -50, 0, 120)
+    submitButton.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    submitButton.Text = "Valider"
+    submitButton.TextColor3 = Color3.fromRGB(200, 50, 50)
+    submitButton.TextSize = 16
+    submitButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+    submitButton.Parent = keyFrame
+
+    local submitButtonStroke = Instance.new("UIStroke")
+    submitButtonStroke.Thickness = 2
+    submitButtonStroke.Color = Color3.fromRGB(200, 50, 50)
+    submitButtonStroke.Parent = submitButton
+
+    submitButton.MouseButton1Click:Connect(function()
+        if verifyKeyAndHWID(keyInput.Text) then
+            keyGui:Destroy()
+            createMainUI()
+        end
+    end)
+end
+
+-- Fonction principale pour lancer l'interface
+function createMainUI()
+    local function waitForGameLoaded()
+        if not game:IsLoaded() then
+            game.Loaded:Wait()
+        end
+        local player = Players.LocalPlayer
+        if not player then
+            Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
+            player = Players.LocalPlayer
+        end
+        return player
+    end
+
+    local player = waitForGameLoaded()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "XyloKitUI"
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    screenGui.ResetOnSpawn = false
+    screenGui.IgnoreGuiInset = true
+
+    local Themes = {
+        Dark = {
+            MainBackground = Color3.fromRGB(18, 18, 18),
+            TabBackground = Color3.fromRGB(24, 24, 24),
+            SectionBackground = Color3.fromRGB(30, 30, 30),
+            TextColor = Color3.fromRGB(200, 50, 50),
+            TextHoverColor = Color3.fromRGB(220, 80, 80),
+            BorderColor = Color3.fromRGB(200, 50, 50),
+            SelectedTabColor = Color3.fromRGB(200, 50, 50),
+            ButtonBackground = Color3.fromRGB(28, 28, 28),
+            ButtonHoverBackground = Color3.fromRGB(40, 40, 40),
+            SelectedTabBackground = Color3.fromRGB(36, 36, 36),
+            ShadowColor = Color3.fromRGB(0, 0, 0)
+        }
+    }
+
+    local currentTheme = Themes.Dark
+
+    local config = {}
+    local configFileName = "XyloKitUI_Config.json"
+
+    local function saveConfig()
+        local success, encoded = pcall(HttpService.JSONEncode, HttpService, config)
+        if success then
+            writefile(configFileName, encoded)
+        end
+    end
+
+    local function loadConfig()
+        if isfile(configFileName) then
+            local success, decoded = pcall(HttpService.JSONDecode, HttpService, readfile(configFileName))
+            if success then
+                config = decoded
+            end
+        end
+    end
+
+    loadConfig()
+
+    local executor = identifyexecutor and identifyexecutor() or "Unknown"
+    print("Executor détecté : " .. executor)
 
 -- Création de la fenêtre principale
 function XyloKitUI:CreateWindow(title)
@@ -222,48 +372,79 @@ function XyloKitUI:CreateWindow(title)
     local tabs = {}
     local currentTab = nil
 
-    -- Création d'un onglet
-    function XyloKitUIWindow:CreateTab(name)
-        local tab = {}
-        tab.Name = name
- 
-        -- Bouton de l'onglet
-        local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(1, -10, 0, 40)
-        tabButton.BackgroundColor3 = currentTheme.TabBackground
-        tabButton.Text = name
-        tabButton.TextColor3 = currentTheme.TextColor
-        tabButton.TextSize = 16
-        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
-        tabButton.BorderSizePixel = 0
-        tabButton.Parent = tabBar
- 
-        local tabStroke = Instance.new("UIStroke")
-        tabStroke.Thickness = 2
-        tabStroke.Color = currentTheme.BorderColor
-        tabStroke.Parent = tabButton
- 
-        -- Indicateur de sélection
-        local tabIndicator = Instance.new("Frame")
-        tabIndicator.Size = UDim2.new(0, 4, 1, 0)
-        tabIndicator.Position = UDim2.new(0, 0, 0, 0)
-        tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
-        tabIndicator.BorderSizePixel = 0
-        tabIndicator.Visible = false
-        tabIndicator.Parent = tabButton
- 
-        -- Effet de survol supprimé sur le texte
-        tabButton.MouseEnter:Connect(function()
-            if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-            end
-        end)
- 
-        tabButton.MouseLeave:Connect(function()
-            if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.TabBackground
-            end
-        end)
+-- Création d'un onglet
+function XyloKitUIWindow:CreateTab(name)
+    local tab = {}
+    tab.Name = name
+
+    -- Créer un conteneur temporaire pour isoler le bouton
+    local tempContainer = Instance.new("Frame")
+    tempContainer.Size = UDim2.new(1, -10, 0, 40)
+    tempContainer.BackgroundTransparency = 1
+    tempContainer.Parent = tabBar
+
+    -- Bouton de l'onglet
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(1, 0, 1, 0)
+    tabButton.BackgroundColor3 = currentTheme.TabBackground
+    tabButton.Text = name
+    tabButton.TextColor3 = currentTheme.TextColor
+    tabButton.TextSize = 16
+    -- Utiliser une police native sans effet
+    tabButton.Font = Enum.Font.SourceSans
+    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur    
+    tabButton.TextStrokeTransparency = 1 -- Désactive le contour
+    tabButton.TextTransparency = 0 -- Texte visible
+    tabButton.RichText = false -- Désactive texte enrichi
+    tabButton.BorderSizePixel = 0
+    tabButton.TextXAlignment = Enum.TextXAlignment.Center
+    tabButton.TextYAlignment = Enum.TextYAlignment.Center
+    tabButton.ClipsDescendants = true
+    tabButton.Parent = tempContainer
+
+    -- Désactiver explicitement tous les effets visuels possibles
+    tabButton.TextWrapped = false -- Empêche le texte de s'enrouler avec des effets
+    tabButton.AutoLocalize = false -- Désactive la localisation qui pourrait modifier le rendu
+    tabButton.LineHeight = 1.0 -- Réinitialise la hauteur des lignes
+
+    -- Vérifier les effets hérités du parent
+    local function clearInheritedEffects(button)
+        button.TextStrokeTransparency = 1
+        button.TextStrokeColor3 = Color3.new(0, 0, 0)
+        button.RichText = false
+        button.TextWrapped = false
+    end
+    clearInheritedEffects(tabButton)
+    clearInheritedEffects(tabBar) -- Appliquer aussi au parent
+
+    local tabStroke = Instance.new("UIStroke")
+    tabStroke.Thickness = 2
+    tabStroke.Color = currentTheme.BorderColor
+    tabStroke.Parent = tabButton
+
+    -- Indicateur de sélection
+    local tabIndicator = Instance.new("Frame")
+    tabIndicator.Size = UDim2.new(0, 4, 1, 0)
+    tabIndicator.Position = UDim2.new(0, 0, 0, 0)
+    tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
+    tabIndicator.BorderSizePixel = 0
+    tabIndicator.Visible = false
+    tabIndicator.Parent = tabButton
+
+    -- Effet de survol
+    tabButton.MouseEnter:Connect(function()
+        if currentTab ~= tab then
+            tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
+        end
+    end)
+
+    tabButton.MouseLeave:Connect(function()
+        if currentTab ~= tab then
+            tabButton.BackgroundColor3 = currentTheme.TabBackground
+        end
+    end)
+
+    -- ... (reste du code de CreateTab inchangé)
     
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
