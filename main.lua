@@ -564,113 +564,109 @@ tabButton.Parent = tabBar
                 end)
             end
 
-            -- Création d'un dropdown
-            function section:CreateDropdown(name, options, default, callback)
-                local dropdownFrame = Instance.new("Frame")
-                dropdownFrame.Size = UDim2.new(1, -20, 0, 35)
-                dropdownFrame.BackgroundTransparency = 1
-                dropdownFrame.Parent = scrollFrame
+           -- Création d'un dropdown
+function section:CreateDropdown(name, options, default, callback)
+    local dropdownFrame = Instance.new("Frame")
+    dropdownFrame.Size = UDim2.new(1, -20, 0, 35)
+    dropdownFrame.BackgroundTransparency = 1
+    dropdownFrame.Parent = scrollFrame
 
-                local dropdownLabel = Instance.new("TextLabel")
-                dropdownLabel.Size = UDim2.new(0.7, 0, 1, 0)
-                dropdownLabel.Position = UDim2.new(0, 5, 0, 0)
-                dropdownLabel.BackgroundTransparency = 1
-                dropdownLabel.Text = name .. ": " .. default
-                dropdownLabel.TextColor3 = currentTheme.TextColor
-                dropdownLabel.TextSize = 16
-                dropdownLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-                dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
-                dropdownLabel.Parent = dropdownFrame
+    local dropdownLabel = Instance.new("TextLabel")
+    dropdownLabel.Size = UDim2.new(0.7, 0, 1, 0)
+    dropdownLabel.Position = UDim2.new(0, 5, 0, 0)
+    dropdownLabel.BackgroundTransparency = 1
+    dropdownLabel.Text = name .. ": " .. default
+    dropdownLabel.TextColor3 = currentTheme.TextColor
+    dropdownLabel.TextSize = 16
+    dropdownLabel.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+    dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
+    dropdownLabel.Parent = dropdownFrame
 
-                local dropdownButton = Instance.new("TextButton")
-                dropdownButton.Size = UDim2.new(0, 30, 0, 30)
-                dropdownButton.Position = UDim2.new(1, -35, 0, 2)
-                dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
-                dropdownButton.Text = "▼"
-                dropdownButton.TextColor3 = currentTheme.TextColor
-                dropdownButton.TextSize = 14
-                dropdownButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
-                dropdownButton.BorderSizePixel = 0
-                dropdownButton.Parent = dropdownFrame
+    local dropdownButton = Instance.new("TextButton")
+    dropdownButton.Size = UDim2.new(0, 30, 0, 30)
+    dropdownButton.Position = UDim2.new(1, -35, 0, 2)
+    dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
+    dropdownButton.Text = "▼"
+    dropdownButton.TextColor3 = currentTheme.TextColor
+    dropdownButton.TextSize = 14
+    dropdownButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+    dropdownButton.BorderSizePixel = 0
+    dropdownButton.Parent = dropdownFrame
 
-                local dropdownButtonStroke = Instance.new("UIStroke")
-                dropdownButtonStroke.Thickness = 2
-                dropdownButtonStroke.Color = currentTheme.BorderColor
-                dropdownButtonStroke.Parent = dropdownButton
+    local dropdownButtonStroke = Instance.new("UIStroke")
+    dropdownButtonStroke.Thickness = 2
+    dropdownButtonStroke.Color = currentTheme.BorderColor
+    dropdownButtonStroke.Parent = dropdownButton
 
-                dropdownButton.MouseEnter:Connect(function()
-                    dropdownButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-                end)
+    dropdownButton.MouseEnter:Connect(function()
+        dropdownButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
+    end)
 
-                dropdownButton.MouseLeave:Connect(function()
-                    dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
-                end)
+    dropdownButton.MouseLeave:Connect(function()
+        dropdownButton.BackgroundColor3 = currentTheme.ButtonBackground
+    end)
 
-                local dropdownList = Instance.new("ScrollingFrame")
-                dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
-                dropdownList.Position = UDim2.new(0.7, 0, 1, 5)
-                dropdownList.BackgroundColor3 = currentTheme.ButtonBackground
-                dropdownList.Visible = false
-                dropdownList.ScrollBarThickness = 4
-                dropdownList.ScrollBarImageColor3 = currentTheme.BorderColor
-                dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 30)
-                dropdownList.Parent = dropdownFrame
+    local dropdownList = Instance.new("ScrollingFrame")
+    dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
+    dropdownList.Position = UDim2.new(0.7, 0, 1, 5)
+    dropdownList.BackgroundColor3 = currentTheme.ButtonBackground
+    dropdownList.Visible = false
+    dropdownList.ScrollBarThickness = 4
+    dropdownList.ScrollBarImageColor3 = currentTheme.BorderColor
+    dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 30)
+    dropdownList.Parent = dropdownFrame
 
-                local dropdownListStroke = Instance.new("UIStroke")
-                dropdownListStroke.Thickness = 2
-                dropdownListStroke.Color = currentTheme.BorderColor
-                dropdownListStroke.Parent = dropdownList
+    local dropdownListStroke = Instance.new("UIStroke")
+    dropdownListStroke.Thickness = 2
+    dropdownListStroke.Color = currentTheme.BorderColor
+    dropdownListStroke.Parent = dropdownList
 
-                local dropdownListLayout = Instance.new("UIListLayout")
-                dropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-                dropdownListLayout.Padding = UDim.new(0, 5)
-                dropdownListLayout.Parent = dropdownList
+    local dropdownListLayout = Instance.new("UIListLayout")
+    dropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    dropdownListLayout.Padding = UDim.new(0, 5)
+    dropdownListLayout.Parent = dropdownList
 
-                local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Dropdown"
-                if config[configKey] ~= nil then
-                    default = config[configKey]
-                    dropdownLabel.Text = name .. ": " .. default
-                end
+    local configKey = tab.Name .. "_" .. section.Name .. "_" .. name .. "_Dropdown"
+    if config[configKey] ~= nil then
+        default = config[configKey]
+        dropdownLabel.Text = name .. ": " .. default
+    end
 
-                for _, option in pairs(options) do
-                    local optionButton = Instance.new("TextButton")
-                    optionButton.Size = UDim2.new(1, -10, 0, 25)
-                    optionButton.BackgroundColor3 = currentTheme.ButtonBackground
-                    optionButton.Text = option
-                    optionButton.TextColor3 = currentTheme.TextColor
-                    optionButton.TextSize = 14
-                    optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
-                    optionButton.Parent = dropdownList
+    for _, option in pairs(options) do
+        local optionButton = Instance.new("TextButton")
+        optionButton.Size = UDim2.new(1, -10, 0, 25)
+        optionButton.BackgroundColor3 = currentTheme.ButtonBackground
+        optionButton.Text = option
+        optionButton.TextColor3 = currentTheme.TextColor
+        optionButton.TextSize = 14
+        optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
+        optionButton.BorderSizePixel = 0 -- Suppression du contour
+        optionButton.Parent = dropdownList
 
-                    local optionButtonStroke = Instance.new("UIStroke")
-                    optionButtonStroke.Thickness = 2
-                    optionButtonStroke.Color = currentTheme.BorderColor
-                    optionButtonStroke.Parent = optionButton
+        optionButton.MouseEnter:Connect(function()
+            optionButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
+        end)
 
-                    optionButton.MouseEnter:Connect(function()
-                        optionButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-                    end)
+        optionButton.MouseLeave:Connect(function()
+            optionButton.BackgroundColor3 = currentTheme.ButtonBackground
+        end)
 
-                    optionButton.MouseLeave:Connect(function()
-                        optionButton.BackgroundColor3 = currentTheme.ButtonBackground
-                    end)
+        optionButton.MouseButton1Click:Connect(function()
+            dropdownLabel.Text = name .. ": " .. option
+            dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
+            dropdownList.Visible = false
+            config[configKey] = option
+            saveConfig()
+            callback(option)
+        end)
+    end
 
-                    optionButton.MouseButton1Click:Connect(function()
-                        dropdownLabel.Text = name .. ": " .. option
-                        dropdownList.Size = UDim2.new(0.3, 0, 0, 0)
-                        dropdownList.Visible = false
-                        config[configKey] = option
-                        saveConfig()
-                        callback(option)
-                    end)
-                end
-
-                dropdownButton.MouseButton1Click:Connect(function()
-                    dropdownList.Visible = not dropdownList.Visible
-                    local targetSize = dropdownList.Visible and UDim2.new(0.3, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.3, 0, 0, 0)
-                    dropdownList.Size = targetSize
-                end)
-            end
+    dropdownButton.MouseButton1Click:Connect(function()
+        dropdownList.Visible = not dropdownList.Visible
+        local targetSize = dropdownList.Visible and UDim2.new(0.3, 0, 0, math.min(#options * 30, 120)) or UDim2.new(0.3, 0, 0, 0)
+        dropdownList.Size = targetSize
+    end)
+end
 
             return section
         end
