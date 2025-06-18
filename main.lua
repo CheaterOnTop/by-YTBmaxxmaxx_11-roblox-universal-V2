@@ -70,21 +70,11 @@ end
 loadConfig()
 
 -- Détection de l'exécuteur
-local function detectExecutor()
-    if isSolara then return "Solara" end
-    if xeno or _G_Xeno then return "Xeno" end
-    if wearedevs or jjsploit then return "JJSploit" end
-    if syn then return "Synapse X" end
-    if Krnl then return "Krnl" end
-    if http and queue_on_teleport then return "Swift" end
-    return "Unknown Executor"
-end
-
-print("Exécuteur détecté : " .. detectExecutor())
+local executor = identifyexecutor and identifyexecutor() or "Unknown"
+print("Executor détecté : " .. executor)
 
 -- Création de la fenêtre principale
 function XyloKitUI:CreateWindow(title)
-    print("Création de la fenêtre : " .. title)
     local XyloKitUIWindow = {}
     XyloKitUIWindow.Configuration = config
 
@@ -234,7 +224,6 @@ function XyloKitUI:CreateWindow(title)
 
 -- Création d'un onglet
 function XyloKitUIWindow:CreateTab(name)
-    print("Création de l'onglet : " .. name)
     local tab = {}
     tab.Name = name
 
@@ -381,10 +370,9 @@ function XyloKitUIWindow:CreateTab(name)
         local sectionCount = 0
         function tab:CreateSection(name)
             if sectionCount >= 6 then
-                warn("Maximum de 6 sections atteint pour cet onglet.")
+                warn("nil")
                 return nil
             end
-            print("Création de la section : " .. name)
             local section = {}
             section.Name = name
 
