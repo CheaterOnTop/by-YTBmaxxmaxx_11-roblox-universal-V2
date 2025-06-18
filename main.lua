@@ -222,79 +222,48 @@ function XyloKitUI:CreateWindow(title)
     local tabs = {}
     local currentTab = nil
 
--- Création d'un onglet
-function XyloKitUIWindow:CreateTab(name)
-    local tab = {}
-    tab.Name = name
-
-    -- Créer un conteneur temporaire pour isoler le bouton
-    local tempContainer = Instance.new("Frame")
-    tempContainer.Size = UDim2.new(1, -10, 0, 40)
-    tempContainer.BackgroundTransparency = 1
-    tempContainer.Parent = tabBar
-
-    -- Bouton de l'onglet
-    local tabButton = Instance.new("TextButton")
-    tabButton.Size = UDim2.new(1, 0, 1, 0)
-    tabButton.BackgroundColor3 = currentTheme.TabBackground
-    tabButton.Text = name
-    tabButton.TextColor3 = currentTheme.TextColor
-    tabButton.TextSize = 16
-    -- Utiliser une police native sans effet
-    tabButton.Font = Enum.Font.SourceSans
-    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur    
-    tabButton.TextStrokeTransparency = 1 -- Désactive le contour
-    tabButton.TextTransparency = 0 -- Texte visible
-    tabButton.RichText = false -- Désactive texte enrichi
-    tabButton.BorderSizePixel = 0
-    tabButton.TextXAlignment = Enum.TextXAlignment.Center
-    tabButton.TextYAlignment = Enum.TextYAlignment.Center
-    tabButton.ClipsDescendants = true
-    tabButton.Parent = tempContainer
-
-    -- Désactiver explicitement tous les effets visuels possibles
-    tabButton.TextWrapped = false -- Empêche le texte de s'enrouler avec des effets
-    tabButton.AutoLocalize = false -- Désactive la localisation qui pourrait modifier le rendu
-    tabButton.LineHeight = 1.0 -- Réinitialise la hauteur des lignes
-
-    -- Vérifier les effets hérités du parent
-    local function clearInheritedEffects(button)
-        button.TextStrokeTransparency = 1
-        button.TextStrokeColor3 = Color3.new(0, 0, 0)
-        button.RichText = false
-        button.TextWrapped = false
-    end
-    clearInheritedEffects(tabButton)
-    clearInheritedEffects(tabBar) -- Appliquer aussi au parent
-
-    local tabStroke = Instance.new("UIStroke")
-    tabStroke.Thickness = 2
-    tabStroke.Color = currentTheme.BorderColor
-    tabStroke.Parent = tabButton
-
-    -- Indicateur de sélection
-    local tabIndicator = Instance.new("Frame")
-    tabIndicator.Size = UDim2.new(0, 4, 1, 0)
-    tabIndicator.Position = UDim2.new(0, 0, 0, 0)
-    tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
-    tabIndicator.BorderSizePixel = 0
-    tabIndicator.Visible = false
-    tabIndicator.Parent = tabButton
-
-    -- Effet de survol
-    tabButton.MouseEnter:Connect(function()
-        if currentTab ~= tab then
-            tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
-        end
-    end)
-
-    tabButton.MouseLeave:Connect(function()
-        if currentTab ~= tab then
-            tabButton.BackgroundColor3 = currentTheme.TabBackground
-        end
-    end)
-
-    -- ... (reste du code de CreateTab inchangé)
+    -- Création d'un onglet
+    function XyloKitUIWindow:CreateTab(name)
+        local tab = {}
+        tab.Name = name
+ 
+        -- Bouton de l'onglet
+        local tabButton = Instance.new("TextButton")
+        tabButton.Size = UDim2.new(1, -10, 0, 40)
+        tabButton.BackgroundColor3 = currentTheme.TabBackground
+        tabButton.Text = name
+        tabButton.TextColor3 = currentTheme.TextColor
+        tabButton.TextSize = 16
+        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
+        tabButton.BorderSizePixel = 0
+        tabButton.Parent = tabBar
+ 
+        local tabStroke = Instance.new("UIStroke")
+        tabStroke.Thickness = 2
+        tabStroke.Color = currentTheme.BorderColor
+        tabStroke.Parent = tabButton
+ 
+        -- Indicateur de sélection
+        local tabIndicator = Instance.new("Frame")
+        tabIndicator.Size = UDim2.new(0, 4, 1, 0)
+        tabIndicator.Position = UDim2.new(0, 0, 0, 0)
+        tabIndicator.BackgroundColor3 = currentTheme.SelectedTabColor
+        tabIndicator.BorderSizePixel = 0
+        tabIndicator.Visible = false
+        tabIndicator.Parent = tabButton
+ 
+        -- Effet de survol supprimé sur le texte
+        tabButton.MouseEnter:Connect(function()
+            if currentTab ~= tab then
+                tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
+            end
+        end)
+ 
+        tabButton.MouseLeave:Connect(function()
+            if currentTab ~= tab then
+                tabButton.BackgroundColor3 = currentTheme.TabBackground
+            end
+        end)
     
         -- Contenu de l'onglet avec deux conteneurs
         local tabContent = Instance.new("Frame")
