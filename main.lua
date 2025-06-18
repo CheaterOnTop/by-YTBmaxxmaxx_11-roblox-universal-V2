@@ -245,17 +245,20 @@ function XyloKitUIWindow:CreateTab(name)
     tabButton.Text = name
     tabButton.TextColor3 = currentTheme.TextColor
     tabButton.TextSize = 16
-    -- Utiliser une police native sans effet
-    tabButton.Font = Enum.Font.SourceSans -- Police standard de Roblox
-    tabButton.TextStrokeTransparency = 1 -- Désactive le contour de texte
-    tabButton.TextStrokeColor3 = Color3.new(0, 0, 0) -- Réinitialise la couleur du contour au noir (inactif)
-    tabButton.TextTransparency = 0 -- Assure que le texte est visible
+    tabButton.TextStrokeTransparency = 1 -- Supprime le contour
+    tabButton.TextTransparency = 0
     tabButton.BorderSizePixel = 0
+    tabButton.RichText = false -- Désactive tout effet spécial dans le texte
     tabButton.Parent = tabBar
 
-    -- Supprimer tout effet hérité
-    tabButton.RichText = false -- Désactive le texte enrichi qui pourrait ajouter des effets
+    -- Police fine sans effet gras
+    tabButton.FontFace = Font.new(
+        "rbxasset://fonts/families/SourceSansPro.json", -- Ou GothamSSM si tu préfères
+        Enum.FontWeight.Regular,
+        Enum.FontStyle.Normal
+    )
 
+    -- Bordure du bouton (UIStroke)
     local tabStroke = Instance.new("UIStroke")
     tabStroke.Thickness = 2
     tabStroke.Color = currentTheme.BorderColor
