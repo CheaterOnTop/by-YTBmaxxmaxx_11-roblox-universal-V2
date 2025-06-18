@@ -239,15 +239,20 @@ function XyloKitUI:CreateWindow(title)
         tab.Name = name
 
         -- Bouton de l'onglet
-        local tabButton = Instance.new("TextButton")
-        tabButton.Size = UDim2.new(1, -10, 0, 40)
-        tabButton.BackgroundColor3 = currentTheme.TabBackground
-        tabButton.Text = name
-        tabButton.TextColor3 = currentTheme.TextColor
-        tabButton.TextSize = 16
-        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
-        tabButton.BorderSizePixel = 0
-        tabButton.Parent = tabBar
+      local tabButton = Instance.new("TextButton")
+tabButton.Size = UDim2.new(1, -10, 0, 40)
+tabButton.BackgroundColor3 = currentTheme.TabBackground
+tabButton.Text = name
+tabButton.TextColor3 = currentTheme.TextColor
+tabButton.TextSize = 16
+tabButton.FontFace = Font.new(
+    "rbxasset://fonts/families/GothamSSM.json",
+    Enum.FontWeight.Regular,
+    Enum.FontStyle.Normal
+)
+tabButton.BorderSizePixel = 0
+tabButton.TextStrokeTransparency = 1 -- Enlève le contour si présent
+tabButton.Parent = tabBar
 
         local tabStroke = Instance.new("UIStroke")
         tabStroke.Thickness = 2
