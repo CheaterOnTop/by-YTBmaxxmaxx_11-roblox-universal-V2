@@ -245,7 +245,7 @@ function XyloKitUI:CreateWindow(title)
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
         tabButton.TextSize = 16
-        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+        tabButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
 
@@ -266,13 +266,13 @@ function XyloKitUI:CreateWindow(title)
         -- Effet de survol supprimé sur le texte
         tabButton.MouseEnter:Connect(function()
             if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground -- Changement de fond uniquement
+                tabButton.BackgroundColor3 = currentTheme.ButtonHoverBackground
             end
         end)
 
         tabButton.MouseLeave:Connect(function()
             if currentTab ~= tab then
-                tabButton.BackgroundColor3 = currentTheme.TabBackground -- Retour au fond d'origine
+                tabButton.BackgroundColor3 = currentTheme.TabBackground
             end
         end)
 
@@ -634,7 +634,7 @@ function XyloKitUI:CreateWindow(title)
                     optionButton.Text = option
                     optionButton.TextColor3 = currentTheme.TextColor
                     optionButton.TextSize = 14
-                    optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json")
+                    optionButton.FontFace = Font.new("rbxasset://fonts/families/GothamSSM.json") -- Police normale
                     optionButton.Parent = dropdownList
 
                     local optionButtonStroke = Instance.new("UIStroke")
@@ -727,5 +727,5 @@ function XyloKitUI:CreateWindow(title)
     return XyloKitUIWindow
 end
 
--- Renvoyer la tabld
+-- Renvoyer la table XyloKitUI
 return XyloKitUI
