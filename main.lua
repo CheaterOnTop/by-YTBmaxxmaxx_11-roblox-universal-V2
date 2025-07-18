@@ -149,7 +149,7 @@ function XyloKitUI:CreateWindow(title)
     titleLabel.Text = title
     titleLabel.TextColor3 = currentTheme.TextColor
     titleLabel.TextSize = 24
-    titleLabel.Font = Enum.Font.GothamBold -- Police corrigée pour éviter le flou
+    titleLabel.Font = Enum.Font.SourceSansBold -- Police standard pour éviter le flou
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.Parent = mainFrame
 
@@ -193,7 +193,7 @@ function XyloKitUI:CreateWindow(title)
     closeButton.Text = "✕"
     closeButton.TextColor3 = currentTheme.TextColor
     closeButton.TextSize = 20
-    closeButton.Font = Enum.Font.GothamBold
+    closeButton.Font = Enum.Font.SourceSansBold
     closeButton.Parent = mainFrame
 
     local closeStroke = Instance.new("UIStroke")
@@ -245,7 +245,7 @@ function XyloKitUI:CreateWindow(title)
         tabButton.Text = name
         tabButton.TextColor3 = currentTheme.TextColor
         tabButton.TextSize = 16
-        tabButton.Font = Enum.Font.GothamBold -- Police corrigée pour éviter le flou
+        tabButton.Font = Enum.Font.SourceSansBold -- Police standard pour éviter le flou
         tabButton.TextXAlignment = Enum.TextXAlignment.Left
         tabButton.BorderSizePixel = 0
         tabButton.Parent = tabBar
@@ -370,7 +370,7 @@ function XyloKitUI:CreateWindow(title)
             sectionLabel.Text = name
             sectionLabel.TextColor3 = currentTheme.TextColor
             sectionLabel.TextSize = 18
-            sectionLabel.Font = Enum.Font.GothamBold
+            sectionLabel.Font = Enum.Font.SourceSansBold
             sectionLabel.TextXAlignment = Enum.TextXAlignment.Center
             sectionLabel.Parent = sectionFrame
 
@@ -403,10 +403,10 @@ function XyloKitUI:CreateWindow(title)
             section.Frame = sectionFrame
             sectionCount = sectionCount + 1
 
-            -- Création d'un toggle avec description
+            -- Création d'un toggle avec description (corrigé)
             function section:CreateToggle(name, description, default, callback)
                 local toggleFrame = Instance.new("Frame")
-                toggleFrame.Size = UDim2.new(1, -20, 0, 50) -- Augmenté pour inclure la description
+                toggleFrame.Size = UDim2.new(1, -20, 0, 50)
                 toggleFrame.BackgroundTransparency = 1
                 toggleFrame.Parent = scrollFrame
 
@@ -417,7 +417,7 @@ function XyloKitUI:CreateWindow(title)
                 toggleLabel.Text = name
                 toggleLabel.TextColor3 = currentTheme.TextColor
                 toggleLabel.TextSize = 16
-                toggleLabel.Font = Enum.Font.GothamBold
+                toggleLabel.Font = Enum.Font.SourceSansBold
                 toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
                 toggleLabel.Parent = toggleFrame
 
@@ -425,10 +425,10 @@ function XyloKitUI:CreateWindow(title)
                 toggleDesc.Size = UDim2.new(0.7, 0, 0, 15)
                 toggleDesc.Position = UDim2.new(0, 5, 0, 25)
                 toggleDesc.BackgroundTransparency = 1
-                toggleDesc.Text = description
-                toggleDesc.TextColor3 = Color3.fromRGB(150, 150, 150) -- Gris atténué pour la description
+                toggleDesc.Text = description or "No description"
+                toggleDesc.TextColor3 = Color3.fromRGB(150, 150, 150)
                 toggleDesc.TextSize = 12
-                toggleDesc.Font = Enum.Font.Gotham
+                toggleDesc.Font = Enum.Font.SourceSans
                 toggleDesc.TextXAlignment = Enum.TextXAlignment.Left
                 toggleDesc.Parent = toggleFrame
 
@@ -439,7 +439,7 @@ function XyloKitUI:CreateWindow(title)
                 toggleButton.Text = default and "✔" or ""
                 toggleButton.TextColor3 = Color3.fromRGB(0, 200, 0)
                 toggleButton.TextSize = 18
-                toggleButton.Font = Enum.Font.GothamBold
+                toggleButton.Font = Enum.Font.SourceSansBold
                 toggleButton.BorderSizePixel = 0
                 toggleButton.Parent = toggleFrame
 
@@ -472,14 +472,14 @@ function XyloKitUI:CreateWindow(title)
                     toggleButton.Text = state and "✔" or ""
                     config[configKey] = state
                     saveConfig()
-                    callback(state)
+                    if callback then callback(state) end
                 end)
             end
 
             -- Création d'un slider avec description
             function section:CreateSlider(name, description, min, max, default, callback)
                 local sliderFrame = Instance.new("Frame")
-                sliderFrame.Size = UDim2.new(1, -20, 0, 65) -- Augmenté pour inclure la description
+                sliderFrame.Size = UDim2.new(1, -20, 0, 65)
                 sliderFrame.BackgroundTransparency = 1
                 sliderFrame.Parent = scrollFrame
 
@@ -490,7 +490,7 @@ function XyloKitUI:CreateWindow(title)
                 sliderLabel.Text = name .. ": " .. default
                 sliderLabel.TextColor3 = currentTheme.TextColor
                 sliderLabel.TextSize = 16
-                sliderLabel.Font = Enum.Font.GothamBold
+                sliderLabel.Font = Enum.Font.SourceSansBold
                 sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
                 sliderLabel.Parent = sliderFrame
 
@@ -498,10 +498,10 @@ function XyloKitUI:CreateWindow(title)
                 sliderDesc.Size = UDim2.new(0.6, 0, 0, 15)
                 sliderDesc.Position = UDim2.new(0, 5, 0, 25)
                 sliderDesc.BackgroundTransparency = 1
-                sliderDesc.Text = description
+                sliderDesc.Text = description or "No description"
                 sliderDesc.TextColor3 = Color3.fromRGB(150, 150, 150)
                 sliderDesc.TextSize = 12
-                sliderDesc.Font = Enum.Font.Gotham
+                sliderDesc.Font = Enum.Font.SourceSans
                 sliderDesc.TextXAlignment = Enum.TextXAlignment.Left
                 sliderDesc.Parent = sliderFrame
 
@@ -571,7 +571,7 @@ function XyloKitUI:CreateWindow(title)
                         sliderLabel.Text = name .. ": " .. value
                         config[configKey] = value
                         saveConfig()
-                        callback(value)
+                        if callback then callback(value) end
                     end
                 end)
             end
@@ -579,7 +579,7 @@ function XyloKitUI:CreateWindow(title)
             -- Création d'un dropdown avec description
             function section:CreateDropdown(name, description, options, default, callback)
                 local dropdownFrame = Instance.new("Frame")
-                dropdownFrame.Size = UDim2.new(1, -20, 0, 50) -- Augmenté pour inclure la description
+                dropdownFrame.Size = UDim2.new(1, -20, 0, 50)
                 dropdownFrame.BackgroundTransparency = 1
                 dropdownFrame.Parent = scrollFrame
 
@@ -590,7 +590,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownLabel.Text = name .. ": " .. default
                 dropdownLabel.TextColor3 = currentTheme.TextColor
                 dropdownLabel.TextSize = 16
-                dropdownLabel.Font = Enum.Font.GothamBold
+                dropdownLabel.Font = Enum.Font.SourceSansBold
                 dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
                 dropdownLabel.Parent = dropdownFrame
 
@@ -598,10 +598,10 @@ function XyloKitUI:CreateWindow(title)
                 dropdownDesc.Size = UDim2.new(0.7, 0, 0, 15)
                 dropdownDesc.Position = UDim2.new(0, 5, 0, 25)
                 dropdownDesc.BackgroundTransparency = 1
-                dropdownDesc.Text = description
+                dropdownDesc.Text = description or "No description"
                 dropdownDesc.TextColor3 = Color3.fromRGB(150, 150, 150)
                 dropdownDesc.TextSize = 12
-                dropdownDesc.Font = Enum.Font.Gotham
+                dropdownDesc.Font = Enum.Font.SourceSans
                 dropdownDesc.TextXAlignment = Enum.TextXAlignment.Left
                 dropdownDesc.Parent = dropdownFrame
 
@@ -612,7 +612,7 @@ function XyloKitUI:CreateWindow(title)
                 dropdownButton.Text = "▼"
                 dropdownButton.TextColor3 = currentTheme.TextColor
                 dropdownButton.TextSize = 14
-                dropdownButton.Font = Enum.Font.GothamBold
+                dropdownButton.Font = Enum.Font.SourceSansBold
                 dropdownButton.BorderSizePixel = 0
                 dropdownButton.Parent = dropdownFrame
 
@@ -662,7 +662,7 @@ function XyloKitUI:CreateWindow(title)
                     optionButton.Text = option
                     optionButton.TextColor3 = currentTheme.TextColor
                     optionButton.TextSize = 14
-                    optionButton.Font = Enum.Font.GothamBold
+                    optionButton.Font = Enum.Font.SourceSansBold
                     optionButton.BorderSizePixel = 0
                     optionButton.Parent = dropdownList
 
@@ -680,7 +680,7 @@ function XyloKitUI:CreateWindow(title)
                         dropdownList.Visible = false
                         config[configKey] = option
                         saveConfig()
-                        callback(option)
+                        if callback then callback(option) end
                     end)
                 end
 
@@ -722,7 +722,7 @@ function XyloKitUI:CreateWindow(title)
         playerName.Text = player and player.Name or "Loading..."
         playerName.TextColor3 = currentTheme.TextColor
         playerName.TextSize = 16
-        playerName.Font = Enum.Font.GothamBold
+        playerName.Font = Enum.Font.SourceSansBold
         playerName.TextXAlignment = Enum.TextXAlignment.Left
         playerName.Parent = playerInfoFrame
 
