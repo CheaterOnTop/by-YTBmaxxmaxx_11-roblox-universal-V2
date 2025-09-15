@@ -1,0 +1,114 @@
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+
+local function CreateDropdown(section, name, options, default, callback)
+    local dropdownFrame = Instance.new("Frame")
+    dropdownFrame.Size = UDim2.new(1, -20, 0, 38)
+    dropdownFrame.BackgroundTransparency = 1
+    dropdownFrame.Parent = section.Frame:FindFirstChild("ScrollingFrame")
+
+    local dropdownLabel = Instance.new("TextLabel")
+    dropdownLabel.Size = UDim2.new(0.7, 0, 1, 0)
+    dropdownLabel.Position = UDim2.new(0, 5, 0, 0)
+    dropdownLabel.BackgroundTransparency = 1
+    dropdownLabel.Text = name
+    dropdownLabel.TextColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    dropdownLabel.TextSize = 16
+    dropdownLabel.Font = Enum.Font.Code
+    dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
+    dropdownLabel.Parent = dropdownFrame
+
+    local dropdownButton = Instance.new("TextButton")
+    dropdownButton.Size = UDim2.new(0, 100, 0, 30)
+    dropdownButton.Position = UDim2.new(1, -105, 0, 4)
+    dropdownButton.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonBackground
+    dropdownButton.Text = default or options[1] or ""
+    dropdownButton.TextColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    dropdownButton.TextSize = 14
+    dropdownButton.Font = Enum.Font.Code
+    dropdownButton.BorderSizePixel = 0
+    dropdownButton.Parent = dropdownFrame
+
+    local dropdownStroke = Instance.new("UIStroke")
+    dropdownStroke.Thickness = 1
+    dropdownStroke.Color = _G.XyloKitUI.CurrentTheme.BorderColor
+    dropdownStroke.Parent = dropdownButton
+
+    local dropdownList = Instance.new("Frame")
+    dropdownList.Size = UDim2.new(0, 100, 0, 0)
+    dropdownList.Position = UDim2.new(1, -105, 0, 38)
+    dropdownList.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonBackground
+    dropdownList.BorderSizePixel = 0
+    dropdownList.ClipsDescendants = true
+    dropdownList.Visible = false
+    dropdownList.Parent = dropdownFrame
+
+    local listStroke = Instance.new("UIStroke")
+    listStroke.Thickness = 1
+    listStroke.Color = _G.XyloKitUI.CurrentTheme.BorderColor
+    listStroke.Parent = dropdownList
+
+    local listLayout = Instance.new("UIListLayout")
+    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    listLayout.Padding = UDim.new(0, 2)
+    listLayout.Parent = dropdownList
+
+    local isOpen = false
+    local selected = default or options[1]
+    local configKey = section.Name .. "_" .. name .. "_Dropdown"
+    if _G.XyloKitUI.Config[configKey] then
+        selected = _G.XyloKitUI.Config[configKey]
+        dropdownButton.Text = selected
+    end
+
+    for i, option in ipairs(options) do
+        local optionButton = Instance.new("TextButton")
+        optionButton.Size = UDim2.new(1, 0, 0, 30)
+        optionButton.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonBackground
+        optionButton.Text = option
+        optionButton.TextColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+        optionButton.TextSize = 14
+        optionButton.Font = Enum.Font.Code
+        optionButton.BorderSizePixel = 0
+        optionButton.Parent = dropdownList
+
+        optionButton.MouseEnter:Connect(function()
+            optionButton.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonHoverBackground
+        end)
+
+        optionButton.MouseLeave:Connect(function()
+            optionButton.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonBackground
+        end)
+
+        optionButton.MouseButton1Click:Connect(function()
+            selected = option
+            dropdownButton.Text = selected
+            isOpen = false
+            dropdownList.Visible = false
+            TweenService:Create(dropdownList, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 100, 0, 0)}):Play()
+            _G.XyloKitUI.Config[configKey] = selected
+            _G.XyloKitUI.SaveConfig()
+            callback(selected)
+        end)
+    end
+
+    dropdownList.Size = UDim2.new(0, 100, 0, math.min(#options * 32, 100))
+
+    dropdownButton.MouseButton1Click:Connect(function()
+        isOpen = not isOpen
+        dropdownList.Visible = isOpen
+        TweenService:Create(dropdownList, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = isOpen and UDim2.new(0, 100, 0, math.min(#options * 32, 100)) or UDim2.new(0, 100, 0, 0)}):Play()
+    end)
+
+    dropdownButton.MouseEnter:Connect(function()
+        dropdownButton.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonHoverBackground
+    end)
+
+    dropdownButton.MouseLeave:Connect(function()
+        dropdownButton.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonBackground
+    end)
+
+    return dropdownFrame
+end
+
+return CreateDropdown
