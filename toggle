@@ -1,0 +1,67 @@
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+
+local function CreateToggle(section, name, default, callback)
+    local toggleFrame = Instance.new("Frame")
+    toggleFrame.Size = UDim2.new(1, -20, 0, 35)
+    toggleFrame.BackgroundTransparency = 1
+    toggleFrame.Parent = section.Frame:FindFirstChild("ScrollingFrame")
+
+    local toggleLabel = Instance.new("TextLabel")
+    toggleLabel.Size = UDim2.new(0.7, 0, 1, 0)
+    toggleLabel.Position = UDim2.new(0, 5, 0, 0)
+    toggleLabel.BackgroundTransparency = 1
+    toggleLabel.Text = name
+    toggleLabel.TextColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    toggleLabel.TextSize = 16
+    toggleLabel.Font = Enum.Font.Code
+    toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    toggleLabel.Parent = toggleFrame
+
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Size = UDim2.new(0, 30, 0, 30)
+    toggleButton.Position = UDim2.new(1, -35, 0, 2)
+    toggleButton.BackgroundColor3 = default and _G.XyloKitUI.CurrentTheme.TextColor or _G.XyloKitUI.CurrentTheme.ButtonBackground
+    toggleButton.Text = default and "✔" or ""
+    toggleButton.TextColor3 = Color3.fromRGB(0, 200, 0)
+    toggleButton.TextSize = 18
+    toggleButton.Font = Enum.Font.Code
+    toggleButton.BorderSizePixel = 0
+    toggleButton.Parent = toggleFrame
+
+    local toggleStroke = Instance.new("UIStroke")
+    toggleStroke.Thickness = 2
+    toggleStroke.Color = _G.XyloKitUI.CurrentTheme.BorderColor
+    toggleStroke.Parent = toggleButton
+
+    local state = default
+    local configKey = section.Name .. "_" .. name .. "_Toggle"
+    if _G.XyloKitUI.Config[configKey] ~= nil then
+        state = _G.XyloKitUI.Config[configKey]
+        toggleButton.BackgroundColor3 = state and _G.XyloKitUI.CurrentTheme.TextColor or _G.XyloKitUI.CurrentTheme.ButtonBackground
+        toggleButton.Text = state and "✔" or ""
+    end
+
+    toggleButton.MouseEnter:Connect(function()
+        local tweenHover = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and _G.XyloKitUI.CurrentTheme.TextHoverColor or _G.XyloKitUI.CurrentTheme.ButtonHoverBackground})
+        tweenHover:Play()
+    end)
+
+    toggleButton.MouseLeave:Connect(function()
+        local tweenLeave = TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = state and _G.XyloKitUI.CurrentTheme.TextColor or _G.XyloKitUI.CurrentTheme.ButtonBackground})
+        tweenLeave:Play()
+    end)
+
+    toggleButton.MouseButton1Click:Connect(function()
+        state = not state
+        toggleButton.BackgroundColor3 = state and _G.XyloKitUI.CurrentTheme.TextColor or _G.XyloKitUI.CurrentTheme.ButtonBackground
+        toggleButton.Text = state and "✔" or ""
+        _G.XyloKitUI.Config[configKey] = state
+        _G.XyloKitUI.SaveConfig()
+        callback(state)
+    end)
+
+    return toggleFrame
+end
+
+return CreateToggle
