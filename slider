@@ -1,0 +1,119 @@
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+
+local function CreateSlider(section, name, min, max, default, callback)
+    local sliderFrame = Instance.new("Frame")
+    sliderFrame.Size = UDim2.new(1, -20, 0, 50)
+    sliderFrame.BackgroundTransparency = 1
+    sliderFrame.Parent = section.Frame:FindFirstChild("ScrollingFrame")
+
+    local sliderLabel = Instance.new("TextLabel")
+    sliderLabel.Size = UDim2.new(1, -60, 0, 20)
+    sliderLabel.Position = UDim2.new(0, 5, 0, 0)
+    sliderLabel.BackgroundTransparency = 1
+    sliderLabel.Text = name
+    sliderLabel.TextColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    sliderLabel.TextSize = 16
+    sliderLabel.Font = Enum.Font.Code
+    sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+    sliderLabel.Parent = sliderFrame
+
+    local valueLabel = Instance.new("TextLabel")
+    valueLabel.Size = UDim2.new(0, 50, 0, 20)
+    valueLabel.Position = UDim2.new(1, -55, 0, 0)
+    valueLabel.BackgroundTransparency = 1
+    valueLabel.Text = tostring(default)
+    valueLabel.TextColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    valueLabel.TextSize = 16
+    valueLabel.Font = Enum.Font.Code
+    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
+    valueLabel.Parent = sliderFrame
+
+    local sliderBar = Instance.new("Frame")
+    sliderBar.Size = UDim2.new(1, -20, 0, 10)
+    sliderBar.Position = UDim2.new(0, 10, 0, 30)
+    sliderBar.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.ButtonBackground
+    sliderBar.BorderSizePixel = 0
+    sliderBar.Parent = sliderFrame
+
+    local sliderStroke = Instance.new("UIStroke")
+    sliderStroke.Thickness = 1
+    sliderStroke.Color = _G.XyloKitUI.CurrentTheme.BorderColor
+    sliderStroke.Parent = sliderBar
+
+    local sliderFill = Instance.new("Frame")
+    sliderFill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+    sliderFill.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    sliderFill.BorderSizePixel = 0
+    sliderFill.Parent = sliderBar
+
+    local sliderKnob = Instance.new("Frame")
+    sliderKnob.Size = UDim2.new(0, 12, 0, 12)
+    sliderKnob.Position = UDim2.new((default - min) / (max - min), -6, 0, -1)
+    sliderKnob.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    sliderKnob.BorderSizePixel = 0
+    sliderKnob.Parent = sliderBar
+
+    local knobStroke = Instance.new("UIStroke")
+    knobStroke.Thickness = 1
+    knobStroke.Color = _G.XyloKitUI.CurrentTheme.BorderColor
+    knobStroke.Parent = sliderKnob
+
+    local knobCorner = Instance.new("UICorner")
+    knobCorner.CornerRadius = UDim.new(0, 4)
+    knobCorner.Parent = sliderKnob
+
+    local value = default
+    local configKey = section.Name .. "_" .. name .. "_Slider"
+    if _G.XyloKitUI.Config[configKey] ~= nil then
+        value = _G.XyloKitUI.Config[configKey]
+        sliderFill.Size = UDim2.new((value - min) / (max - min), 0, 1, 0)
+        sliderKnob.Position = UDim2.new((value - min) / (max - min), -6, 0, -1)
+        valueLabel.Text = tostring(value)
+    end
+
+    local dragging = false
+    sliderBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            local mouseX = UserInputService:GetMouseLocation().X
+            local sliderX = sliderBar.AbsolutePosition.X
+            local sliderWidth = sliderBar.AbsoluteSize.X
+            local ratio = math.clamp((mouseX - sliderX) / sliderWidth, 0, 1)
+            value = min + (max - min) * ratio
+            sliderFill.Size = UDim2.new(ratio, 0, 1, 0)
+            sliderKnob.Position = UDim2.new(ratio, -6, 0, -1)
+            valueLabel.Text = tostring(math.floor(value))
+            _G.XyloKitUI.Config[configKey] = value
+            _G.XyloKitUI.SaveConfig()
+            callback(value)
+        end
+    end)
+
+    sliderBar.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local mouseX = UserInputService:GetMouseLocation().X
+            local sliderX = sliderBar.AbsolutePosition.X
+            local sliderWidth = sliderBar.AbsoluteSize.X
+            local ratio = math.clamp((mouseX - sliderX) / sliderWidth, 0, 1)
+            value = min + (max - min) * ratio
+            sliderFill.Size = UDim2.new(ratio, 0, 1, 0)
+            sliderKnob.Position = UDim2.new(ratio, -6, 0, -1)
+            valueLabel.Text = tostring(math.floor(value))
+            _G.XyloKitUI.Config[configKey] = value
+            _G.XyloKitUI.SaveConfig()
+            callback(value)
+        end
+    end)
+
+    return sliderFrame
+end
+
+return CreateSlider
