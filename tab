@@ -1,0 +1,115 @@
+local TweenService = game:GetService("TweenService")
+
+local function CreateTab(window, contentFrame, tabs, theme, name)
+    print("Création de l'onglet : " .. name)
+    local tab = {}
+    tab.Name = name
+
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(1, -10, 0, 40)
+    tabButton.BackgroundColor3 = theme.TabBackground
+    tabButton.Text = name
+    tabButton.TextColor3 = theme.TextColor
+    tabButton.TextSize = 16
+    tabButton.Font = Enum.Font.Code
+    tabButton.BorderSizePixel = 0
+    tabButton.Parent = window.MainFrame:FindFirstChild("Frame") -- tabBar
+
+    local tabStroke = Instance.new("UIStroke")
+    tabStroke.Thickness = 0.5
+    tabStroke.Color = theme.BorderColor
+    tabStroke.Parent = tabButton
+
+    local tabIndicator = Instance.new("Frame")
+    tabIndicator.Size = UDim2.new(0, 4, 1, 0)
+    tabIndicator.Position = UDim2.new(0, 0, 0, 0)
+    tabIndicator.BackgroundColor3 = theme.SelectedTabColor
+    tabIndicator.BorderSizePixel = 0
+    tabIndicator.Visible = false
+    tabIndicator.Parent = tabButton
+
+    local tabContent = Instance.new("Frame")
+    tabContent.Size = UDim2.new(1, -20, 1, -110)
+    tabContent.Position = UDim2.new(0, 10, 0, 10)
+    tabContent.BackgroundTransparency = 1
+    tabContent.Parent = contentFrame
+    tabContent.Visible = false
+
+    local topContainer = Instance.new("Frame")
+    topContainer.Size = UDim2.new(1, 0, 0, 0)
+    topContainer.Position = UDim2.new(0, 0, 0, 0)
+    topContainer.BackgroundTransparency = 1
+    topContainer.Parent = tabContent
+
+    local topContainerLayout = Instance.new("UIListLayout")
+    topContainerLayout.FillDirection = Enum.FillDirection.Horizontal
+    topContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    topContainerLayout.Padding = UDim.new(0, 15)
+    topContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    topContainerLayout.Parent = topContainer
+
+    local bottomContainer = Instance.new("Frame")
+    bottomContainer.Size = UDim2.new(1, 0, 0, 0)
+    bottomContainer.Position = UDim2.new(0, 0, 0, 0)
+    bottomContainer.BackgroundTransparency = 1
+    bottomContainer.Parent = tabContent
+
+    local bottomContainerLayout = Instance.new("UIListLayout")
+    bottomContainerLayout.FillDirection = Enum.FillDirection.Horizontal
+    bottomContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    bottomContainerLayout.Padding = UDim.new(0, 15)
+    bottomContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    bottomContainerLayout.Parent = bottomContainer
+
+    local function updateContainerPositions()
+        local maxTopHeight = 0
+        for _, child in pairs(topContainer:GetChildren()) do
+            if child:IsA("Frame") and child ~= topContainerLayout then
+                maxTopHeight = math.max(maxTopHeight, child.AbsoluteSize.Y)
+            end
+        end
+        topContainer.Size = UDim2.new(1, 0, 0, maxTopHeight)
+        bottomContainer.Position = UDim2.new(0, 0, 0, maxTopHeight + 10)
+    end
+
+    tab.Button = tabButton
+    tab.Content = tabContent
+    tab.TopContainer = topContainer
+    tab.BottomContainer = bottomContainer
+    tab.Indicator = tabIndicator
+    tab.UpdateContainerPositions = updateContainerPositions
+    tabs[name] = tab
+
+    tabButton.MouseEnter:Connect(function()
+        if tabs[currentTab] ~= tab then
+            tabButton.BackgroundColor3 = theme.ButtonHoverBackground
+        end
+    end)
+
+    tabButton.MouseLeave:Connect(function()
+        if tabs[currentTab] ~= tab then
+            tabButton.BackgroundColor3 = theme.TabBackground
+        end
+    end)
+
+    tabButton.MouseButton1Click:Connect(function()
+        if tabs[currentTab] ~= tab then
+            if tabs[currentTab] then
+                tabs[currentTab].Content.Visible = false
+                if tabs[currentTab].Indicator then
+                    tabs[currentTab].Indicator.Visible = false
+                    tabs[currentTab].Button.BackgroundColor3 = theme.TabBackground
+                end
+            end
+            tabButton.BackgroundColor3 = theme.SelectedTabBackground
+            tabIndicator.Visible = true
+            tabContent.Visible = true
+            tabs[currentTab] = tab
+            updateContainerPositions()
+        end
+    end)
+
+    return tab
+end
+
+return CreateTab
