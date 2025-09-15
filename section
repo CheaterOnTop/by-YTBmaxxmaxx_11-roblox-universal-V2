@@ -1,0 +1,66 @@
+local sectionCount = 0
+
+local function CreateSection(tab, name)
+    if sectionCount >= 6 then
+        warn("Maximum de 6 sections atteint pour cet onglet.")
+        return nil
+    end
+    print("Création de la section : " .. name)
+    local section = {}
+    section.Name = name
+
+    local sectionFrame = Instance.new("Frame")
+    sectionFrame.Size = UDim2.new(0, 250, 0, 300)
+    sectionFrame.BackgroundColor3 = _G.XyloKitUI.CurrentTheme.SectionBackground
+    sectionFrame.BorderSizePixel = 0
+    sectionFrame.Parent = (sectionCount < 3 and tab.TopContainer or tab.BottomContainer)
+
+    local sectionStroke = Instance.new("UIStroke")
+    sectionStroke.Thickness = 2
+    sectionStroke.Color = _G.XyloKitUI.CurrentTheme.BorderColor
+    sectionStroke.Parent = sectionFrame
+
+    local sectionLabel = Instance.new("TextLabel")
+    sectionLabel.Size = UDim2.new(1, -20, 0, 30)
+    sectionLabel.Position = UDim2.new(0, 10, 0, 10)
+    sectionLabel.BackgroundTransparency = 1
+    sectionLabel.Text = name
+    sectionLabel.TextColor3 = _G.XyloKitUI.CurrentTheme.TextColor
+    sectionLabel.TextSize = 18
+    sectionLabel.Font = Enum.Font.Code
+    sectionLabel.TextXAlignment = Enum.TextXAlignment.Center
+    sectionLabel.Parent = sectionFrame
+
+    local scrollFrame = Instance.new("ScrollingFrame")
+    scrollFrame.Size = UDim2.new(1, -20, 0, 260)
+    scrollFrame.Position = UDim2.new(0, 10, 0, 40)
+    scrollFrame.BackgroundTransparency = 1
+    scrollFrame.BorderSizePixel = 0
+    scrollFrame.ScrollBarThickness = 6
+    scrollFrame.ScrollBarImageColor3 = _G.XyloKitUI.CurrentTheme.BorderColor
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    scrollFrame.Parent = sectionFrame
+    section.Frame = scrollFrame
+
+    local scrollLayout = Instance.new("UIListLayout")
+    scrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    scrollLayout.Padding = UDim.new(0, 8)
+    scrollLayout.Parent = scrollFrame
+
+    local sectionPadding = Instance.new("UIPadding")
+    sectionPadding.PaddingLeft = UDim.new(0, 10)
+    sectionPadding.PaddingTop = UDim.new(0, 0)
+    sectionPadding.PaddingBottom = UDim.new(0, 10)
+    sectionPadding.Parent = scrollFrame
+
+    scrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, scrollLayout.AbsoluteContentSize.Y)
+        tab.UpdateContainerPositions()
+    end)
+
+    sectionCount = sectionCount + 1
+    section.Frame = sectionFrame
+    return section
+end
+
+return CreateSection
